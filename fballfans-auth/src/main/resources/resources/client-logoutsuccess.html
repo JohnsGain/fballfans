@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>client1-退出成功</title>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#wrap {
+	
+}
+
+.wrap-register {
+	height: 300px;
+	width: 250px;
+	background-color: #fff;
+	margin: 150px auto;
+}
+
+.wrap-register-form {
+	padding: 30px;
+}
+
+.wrap-register-h {
+	text-align: center;
+	margin: 0 0 10px;
+}
+
+.wrap-register-p {
+	text-align: center;
+	font-size: 5px;
+	margin: 0 0 10px;
+}
+
+input {
+	margin: 0 0 10px;
+	width: 180px;
+	border: 1px solid #e5e6e7;
+	font-size: 14px;
+	padding: 5px;
+}
+
+.item:focus {
+	border: 1px solid #lab394;
+}
+
+.submit {
+	background-color: #0097ee;
+	border: 1px solid #0097ee;
+	color: #fff;
+	width: 190px;
+}
+</style>
+<script src="js/jquery-1.11.1.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		$("#sendCode").click(function sendCode() {
+			var phone = $("#phone").val();
+			console.log(phone);
+			var url = "/code/sms?" + "phone=" + phone;
+			 $.get(url ,function(data,status){
+			      alert("数据：" + data + "\n状态：" + status);
+			    });
+		});
+		
+		
+	});
+</script>
+</head>
+<body class='signin'>
+	<div id='wrap'>
+	<p style="padding: 30px">退出成功</p>
+	</div>
+</body>
+</html>
