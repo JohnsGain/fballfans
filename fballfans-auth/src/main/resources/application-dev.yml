@@ -37,4 +37,4 @@ mybatis:
 imooc:
   security:
     browser:
-      loginPage: /client1-login.html
+      loginPage: /security/needlogin

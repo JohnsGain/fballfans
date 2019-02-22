@@ -4,13 +4,24 @@ import com.john.auth.UrlConst;
 import com.john.auth.properties.BrowserProperties;
 import com.john.auth.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.dao.ReflectionSaltSource;
+import org.springframework.security.authentication.dao.SaltSource;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 
 import javax.sql.DataSource;
 
@@ -21,16 +32,13 @@ import javax.sql.DataSource;
  * @Since jdk1.8
  */
 @Configuration
-public class CommonSecurityConfig extends WebSecurityConfigurerAdapter {
+public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private DataSource dataSource;
+    private AuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private SecurityProperties securityProperties;
+    private AuthenticationUserDetailsService authenticationUserDetailsService;
 
     @Autowired
     private AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -38,26 +46,33 @@ public class CommonSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    /**
+     * 我们使用SessionCreationPolicy.STATELESS无状态的Session机制（即Spring不使用HTTPSession），
+     * 对于所有的请求都做权限校验，这样Spring Security的拦截器会判断所有请求的Header上有没有”X-Auth-Token”。
+     * 对于异常情况（即当Spring Security发现没有），Spring会启用一个认证入口：new RestAuthenticationEntryPoint。
+     * 在我们这个场景下，这个入口只是简单的返回一个401即可：
+     *
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        BrowserProperties browser = securityProperties.getBrowser();
-        http.formLogin()
-//                .loginPage("https://42.123.99.59:13000/support-front/index.html#/login")
-                .loginPage("/client1-login.html")
+        http.addFilter(preAuthenticationFilter())
+                .formLogin()
+                .loginPage("/security/needlogin")
                 .loginProcessingUrl(UrlConst.AUTH_FORM)
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
-                .userDetailsService(userDetailsService)
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("https://42.123.99.59:13000/support-front/index.html#/login")
-                .and()
                 .authorizeRequests()
-                .antMatchers(browser.getLoginPage(), UrlConst.AUTH_FORM,
-                        UrlConst.AUTH_PHONE, "/code/**", "/hello", "/test", "/auth/needlogin", browser.getLoginPage(),
-                        securityProperties.getBrowser().getSignUpPage(),
-                        UrlConst.SOCIAL_SIGNUP, "/user/regist", UrlConst.SESSION_INVALID)
+                .antMatchers("/security/needlogin", "/auth/login", "/hello",
+                        UrlConst.AUTH_FORM)
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -65,7 +80,10 @@ public class CommonSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint);
 
 
 //        http
@@ -127,5 +145,45 @@ public class CommonSecurityConfig extends WebSecurityConfigurerAdapter {
         //
 //                .apply(smsCodeAuthenticationSecurityConfig);
     }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(preAuthenticationProvider());
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }
+
+    private AuthenticationProvider preAuthenticationProvider() {
+        PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+        provider.setPreAuthenticatedUserDetailsService(authenticationUserDetailsService);
+        return provider;
+    }
+
+    /**
+     * 登录成功获取token之后，需要认证的请经过这个过滤器获取token,任何交给PreAuthenticatedAuthenticationProvider
+     * 认证，PreAuthenticatedAuthenticationProvider配置了自定义的 AuthenticationUserDetailsService
+     * 用于通过这里获取的token 获取用户信息
+     * @return
+     * @throws Exception
+     */
+    @Bean
+    public KanBanPreAuthenticationFilter preAuthenticationFilter() throws Exception {
+        KanBanPreAuthenticationFilter filter = new KanBanPreAuthenticationFilter(authenticationManager());
+        //filter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
+        //filter.setContinueFilterChainOnUnsuccessfulAuthentication(false);
+        //因为默认这个过滤器认证不通过，还要继续用过滤链下面的过滤器继续认证，所以这里没有实现失败处理器
+        //filter.setAuthenticationFailureHandler(authenticationFailureHandler);
+        return filter;
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder);
+        SaltSource saltSource = new ReflectionSaltSource();
+        //provider.setSaltSource(item -> "123");
+        return provider;
+    }
+
 
 }

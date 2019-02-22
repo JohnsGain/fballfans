@@ -1,8 +1,13 @@
 package com.john.auth.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import com.john.Result;
+import com.john.ResultStatusEnum;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @description
@@ -15,8 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("auth")
 public class AuthController {
 
-    @GetMapping("needlogin")
-    public String needLogin() {
-        return "needLgoin";
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @RequestMapping("/security/needlogin")
+    public Result unAuthorised(HttpServletRequest request) {
+        return Result.build().error(ResultStatusEnum.AUTHENTICATE_FAILED);
     }
 }
