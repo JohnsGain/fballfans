@@ -26,7 +26,6 @@ import org.springframework.social.config.annotation.EnableSocial;
 @Order(value = 1)
 public class CommonBeanConfig {
 
-
     private final SecurityProperties securityProperties;
 
     private final RedisConnectionFactory redisConnectionFactory;

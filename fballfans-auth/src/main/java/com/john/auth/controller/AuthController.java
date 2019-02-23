@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthController {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @RequestMapping("/security/needlogin")
+    @RequestMapping("/needlogin")
     public Result unAuthorised(HttpServletRequest request) {
         return Result.build().error(ResultStatusEnum.AUTHENTICATE_FAILED);
     }

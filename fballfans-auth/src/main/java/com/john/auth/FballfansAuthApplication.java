@@ -13,9 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  **/
 @SpringBootApplication
 @MapperScan(basePackages = {"com.john.auth.domain.repository"})
-public class AuthenticationServerApplication {
+public class FballfansAuthApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AuthenticationServerApplication.class, args);
+        SpringApplication.run(FballfansAuthApplication.class, args);
     }
 }

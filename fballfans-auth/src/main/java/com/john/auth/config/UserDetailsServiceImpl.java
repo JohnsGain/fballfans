@@ -34,6 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         return new User(byUsername.getUsername(), byUsername.getPassword(),
                 AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+        //return byUsername;
     }
 
 }

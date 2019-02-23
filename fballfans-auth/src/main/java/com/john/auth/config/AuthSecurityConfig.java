@@ -11,6 +11,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.authentication.dao.ReflectionSaltSource;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,12 +27,12 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import javax.sql.DataSource;
 
 /**
- * @Author zhangjuwa
- * @Description:
- * @Date 2018/9/16
- * @Since jdk1.8
+ * @author zhangjuwa
+ * @date 2018/9/16
+ * @since jdk1.8
  */
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -65,13 +66,13 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilter(preAuthenticationFilter())
                 .formLogin()
-                .loginPage("/security/needlogin")
+                .loginPage("/auth/needlogin")
                 .loginProcessingUrl(UrlConst.AUTH_FORM)
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/security/needlogin", "/auth/login", "/hello",
+                .antMatchers( "/auth/needlogin", "/hello",
                         UrlConst.AUTH_FORM)
                 .permitAll()
                 .anyRequest()
