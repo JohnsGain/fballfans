@@ -25,8 +25,6 @@ import java.io.IOException;
 @Component
 public class ImageCodeProcessorImpl implements IValidateCodeProcessor {
 
-
-
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -44,6 +42,11 @@ public class ImageCodeProcessorImpl implements IValidateCodeProcessor {
         String base64img = VerifyCodeUtils.base64Image(Integer.valueOf(width), Integer.valueOf(height), code);
         String signature = passwordEncoder.encode(CommonConst.CODE_HEADER + code.toUpperCase());
         CaptchaParamOutput data = new CaptchaParamOutput(base64img, signature);
+        Result<CaptchaParamOutput> captchaParamOutputResult = Result.<CaptchaParamOutput>build()
+                .ok()
+                .withData(data);
+        response.getWriter()
+                .write(JSON.toJSONString(captchaParamOutputResult));
     }
 
     @Override

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
  * @since jdk1.8
  */
 @Repository
-public interface IUserRepository {
+public interface IUserMapper {
 
     @Select("select * from sys_user where username = #{username}")
     SysUser findByUsername(@Param("username") String username);

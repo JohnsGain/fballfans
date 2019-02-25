@@ -1,11 +1,11 @@
 package com.john.auth.config;
 
+import com.john.auth.domain.entity.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -29,7 +29,7 @@ public class KanBanAuthenticationUserDetailsServiceImpl implements Authenticatio
         Authentication authentication;
         if (ob != null) {
             authentication = (Authentication) ob;
-            User principal1 = (User) authentication.getPrincipal();
+            SysUser principal1 = (SysUser) authentication.getPrincipal();
             if (principal1 != null) {
                 return principal1;
             }

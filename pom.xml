@@ -11,6 +11,7 @@
     <modules>
         <module>fballfans-core</module>
         <module>fballfans-auth</module>
+        <module>fballfans-shiro</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

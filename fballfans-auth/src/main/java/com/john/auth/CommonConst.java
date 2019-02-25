@@ -11,10 +11,11 @@ public final class CommonConst {
      */
     public static final String CODE_HEADER = "ae81cac2";
 
-    /**
-     * 获取图片验证码的控制器路径
-     */
+    ///**
+    // * 获取图片验证码的控制器路径
+    // */
     public static final String IMAGE_URL = "/auth/piccaptcha";
+    //public static final String IMAGE_URL = "/auth/verificationcode";
     /**
      * 处理短信验证码认证的url
      */
@@ -73,6 +74,11 @@ public final class CommonConst {
      * session失效默认的跳转地址
      */
     public static final String DEFAULT_SESSION_INVALID_URL = "/session-invalid.html";
+
+    /**
+     * 角色名统一前缀
+     */
+    public static final String ROLE_ = "ROLE_";
 
     /**
      * APP端第三方用户注册路径

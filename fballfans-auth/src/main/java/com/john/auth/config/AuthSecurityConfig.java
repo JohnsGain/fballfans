@@ -4,6 +4,7 @@ import com.john.auth.CommonConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.dao.ReflectionSaltSource;
@@ -22,6 +23,16 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 
 /**
+ * EnableGlobalMethodSecurity 注解式为了启用全局方法级安全，即使@PreAuthorize,@PostAuthorize等注解生效
+ * 使用方法：@PostAuthorize ("returnObject.type == authentication.name"): 确保登录用户只能获取他自己的用户对象
+ *   @PreAuthorize("hasRole('ADMIN')")
+ *   @PreAuthorize("hasRole('ADMIN') AND hasRole('DBA')")
+ *   @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_SUPER_ADMINISTRATOR')")
+ *
+ * {@link Secured} :@Secured({ "ROLE_DBA", "ROLE_ADMIN" }),表示方法只能够被拥有DBA 或者ADMIN 权限的用户调用
+ *
+ * 此注释是用来定义业务方法的安全配置属性的列表。您可以在需要安全[角色/权限等]的方法上指定 @Secured，
+ * 并且只有那些角色/权限的用户才可以调用该方法。如果有人不具备要求的角色/权限但试图调用此方法，将会抛出AccessDenied 异常。
  * @author zhangjuwa
  * @date 2018/9/16
  * @since jdk1.8
@@ -68,7 +79,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers( "/auth/needlogin", "/hello", CommonConst.IMAGE_URL,
-                        CommonConst.AUTH_FORM)
+                        CommonConst.AUTH_FORM, CommonConst.ICON)
                 .permitAll()
                 .anyRequest()
                 .authenticated()

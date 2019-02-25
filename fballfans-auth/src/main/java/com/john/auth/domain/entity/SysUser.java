@@ -5,9 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * 用户表
@@ -42,7 +43,7 @@ public class SysUser implements Serializable, UserDetails {
 
     private LocalDateTime createTime;
 
-    private List<SysRole> sysRoles;
+    private Set<SysRole> sysRoles;
 
     public Long getId() {
         return id;
@@ -107,11 +108,49 @@ public class SysUser implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
+        Set<GrantedAuthority> list = new HashSet<>(16);
         for (SysRole item : sysRoles) {
+            list.add(item);
             list.addAll(item.getSysAcls());
         }
         return list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SysUser)) {
+            return false;
+        }
+        SysUser sysUser = (SysUser) o;
+        return Objects.equals(id, sysUser.id) &&
+                Objects.equals(username, sysUser.username);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, username);
+    }
+
+    @Override
+    public String toString() {
+        return "SysUser{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", mail='" + mail + '\'' +
+                ", password='" + password + '\'' +
+                ", deptId=" + deptId +
+                ", status=" + status +
+                ", remark='" + remark + '\'' +
+                ", operator='" + operator + '\'' +
+                ", createTime=" + createTime +
+                ", sysRoles=" + sysRoles +
+                '}';
     }
 
     @Override
@@ -163,11 +202,11 @@ public class SysUser implements Serializable, UserDetails {
         this.createTime = createTime;
     }
 
-    public List<SysRole> getSysRoles() {
+    public Set<SysRole> getSysRoles() {
         return sysRoles;
     }
 
-    public void setSysRoles(List<SysRole> sysRoles) {
+    public void setSysRoles(Set<SysRole> sysRoles) {
         this.sysRoles = sysRoles;
     }
 }
