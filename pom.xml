@@ -25,6 +25,7 @@
         <kafka-streams.version>2.0.0</kafka-streams.version>
         <fballfans.version>1.0.0</fballfans.version>
         <fastjson.version>1.2.47</fastjson.version>
+        <validation-api.version>2.0.1.Final</validation-api.version>
     </properties>
     <dependencies>
         <dependency>
@@ -73,6 +74,11 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <version>4.11</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>${validation-api.version}</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

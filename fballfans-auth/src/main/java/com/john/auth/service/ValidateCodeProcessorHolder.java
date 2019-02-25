@@ -7,10 +7,9 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * @Author zhangjuwa
- * @Description:
- * @Date 2018/9/23
- * @Since jdk1.8
+ * @author zhangjuwa
+ * @date 2018/9/23
+ * @since jdk1.8
  */
 @Component
 public class ValidateCodeProcessorHolder {
@@ -22,8 +21,7 @@ public class ValidateCodeProcessorHolder {
     private Map<String, IValidateCodeProcessor> validateCodeProcessorMap;
 
     public IValidateCodeProcessor findCodeProcessor(ValidateCodeTypeEnum typeEnum) {
-        return validateCodeProcessorMap.get(typeEnum.name());
-//        return null;
+        return validateCodeProcessorMap.get(typeEnum.name().toLowerCase() + "CodeProcessorImpl");
     }
 
 }

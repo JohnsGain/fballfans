@@ -4,12 +4,17 @@ package com.john.auth;
  * @author NANUTO
  * @date 2018年3月13日 下午9:40:49
  */
-public final class UrlConst {
+public final class CommonConst {
 
     /**
-     * 获取验证码的控制器路径
+     * 验证码header
      */
-    public static final String CODE = "/code";
+    public static final String CODE_HEADER = "ae81cac2";
+
+    /**
+     * 获取图片验证码的控制器路径
+     */
+    public static final String IMAGE_URL = "/auth/piccaptcha";
     /**
      * 处理短信验证码认证的url
      */

@@ -1,6 +1,6 @@
 package com.john.auth.config;
 
-import com.john.auth.UrlConst;
+import com.john.auth.CommonConst;
 import com.john.auth.properties.SecurityProperties;
 import com.john.auth.properties.ValidateCodeProperties;
 import com.john.auth.properties.ValidateCodeTypeEnum;
@@ -52,11 +52,11 @@ public class ValidateCodeFilter extends OncePerRequestFilter
     @Override
     public void afterPropertiesSet() {
         ValidateCodeProperties validateCode = securityProperties.getValidateCode();
-        typeEnumMap.put(UrlConst.AUTH_FORM, ValidateCodeTypeEnum.IMAGE);
+        typeEnumMap.put(CommonConst.AUTH_FORM, ValidateCodeTypeEnum.IMAGE);
         String url = validateCode.getImageCode().getUrl();
         addUrlToMap(url, ValidateCodeTypeEnum.IMAGE);
 
-        typeEnumMap.put(UrlConst.AUTH_PHONE, ValidateCodeTypeEnum.SMS);
+        typeEnumMap.put(CommonConst.AUTH_PHONE, ValidateCodeTypeEnum.SMS);
         addUrlToMap(validateCode.getSmsCode().getUrl(), ValidateCodeTypeEnum.SMS);
     }
 

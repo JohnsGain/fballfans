@@ -1,8 +1,6 @@
 package com.john.auth.config;
 
-import com.john.auth.UrlConst;
-import com.john.auth.properties.BrowserProperties;
-import com.john.auth.properties.SecurityProperties;
+import com.john.auth.CommonConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,14 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-
-import javax.sql.DataSource;
 
 /**
  * @author zhangjuwa
@@ -67,13 +62,13 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilter(preAuthenticationFilter())
                 .formLogin()
                 .loginPage("/auth/needlogin")
-                .loginProcessingUrl(UrlConst.AUTH_FORM)
+                .loginProcessingUrl(CommonConst.AUTH_FORM)
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
                 .authorizeRequests()
-                .antMatchers( "/auth/needlogin", "/hello",
-                        UrlConst.AUTH_FORM)
+                .antMatchers( "/auth/needlogin", "/hello", CommonConst.IMAGE_URL,
+                        CommonConst.AUTH_FORM)
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -95,7 +90,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 ////                .addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
 //                .formLogin()
 //                .loginPage(browser.getLoginPage())
-//                .loginProcessingUrl(UrlConst.AUTH_FORM)
+//                .loginProcessingUrl(CommonConst.AUTH_FORM)
 //                //自定义登录成功处理器
 //                .successHandler(authenticationSuccessHandler)
 //                //自定义失败处理器
@@ -110,7 +105,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
 //                .sessionManagement()
 //                //session失效 的跳转页面或路径
-//                .invalidSessionUrl(UrlConst.SESSION_INVALID)
+//                .invalidSessionUrl(CommonConst.SESSION_INVALID)
 //                //当前登录用户最大session数量，当设置为1的时候，同一个用户新的登录请求通过之后会把上一次登录成功创建的session失效掉
 //                .maximumSessions(1)
 //                //针对过期的session处理策略，可以自己实现不同的失效策略
@@ -130,10 +125,10 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 ////                .logoutSuccessHandler()  配置了logoutSuccessUrl就不要配置logoutSuccessHandler
 //                .and()
 //                .authorizeRequests()
-//                .antMatchers(browser.getLoginPage(), UrlConst.AUTH_FORM,
-//                        UrlConst.AUTH_PHONE, "/code/**", "/hello", browser.getLoginPage(),
+//                .antMatchers(browser.getLoginPage(), CommonConst.AUTH_FORM,
+//                        CommonConst.AUTH_PHONE, "/code/**", "/hello", browser.getLoginPage(),
 //                        securityProperties.getBrowser().getSignUpPage(),
-//                        UrlConst.SOCIAL_SIGNUP, "/user/regist", UrlConst.SESSION_INVALID)
+//                        CommonConst.SOCIAL_SIGNUP, "/user/regist", CommonConst.SESSION_INVALID)
 //                .permitAll()
 //                .antMatchers("/abcd/*").hasAnyRole("admin", "ROLE_USER")
 //                //hasRole()方法里面会把角色参数加上前缀ROLE_,所以在UserDetailService里面获取用户角色信息数据要加上前缀ROLE

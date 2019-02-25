@@ -17,9 +17,10 @@ import java.io.IOException;
  **/
 @Component
 public class SmsCodeProcessorImpl implements IValidateCodeProcessor {
+
     @Override
     public void create(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletRequestBindingException {
-
+        String authType = request.getAuthType();
     }
 
     @Override
