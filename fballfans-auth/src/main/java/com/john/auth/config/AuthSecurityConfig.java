@@ -20,7 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.stereotype.Component;
 
 /**
  * EnableGlobalMethodSecurity 注解式为了启用全局方法级安全，即使@PreAuthorize,@PostAuthorize等注解生效
@@ -59,6 +61,9 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
+
     /**
      * 我们使用SessionCreationPolicy.STATELESS无状态的Session机制（即Spring不使用HTTPSession），
      * 对于所有的请求都做权限校验，这样Spring Security的拦截器会判断所有请求的Header上有没有”X-Auth-Token”。
@@ -77,12 +82,16 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(authenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
                 .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(logoutSuccessHandler)
+                .and()
                 .authorizeRequests()
-                .antMatchers( "/auth/needlogin", "/hello", CommonConst.IMAGE_URL,
+                .antMatchers("/auth/needlogin", "/hello", CommonConst.IMAGE_URL,
                         CommonConst.AUTH_FORM, CommonConst.ICON)
                 .permitAll()
-                .anyRequest()
-                .authenticated()
+                //.anyRequest()
+                //.authenticated();
                 .and()
                 .csrf()
                 .disable()

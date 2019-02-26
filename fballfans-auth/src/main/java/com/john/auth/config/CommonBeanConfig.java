@@ -15,6 +15,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.social.config.annotation.EnableSocial;
 
+import java.io.Serializable;
+
 /**
  * @Author zhangjuwa
  * @Description:
@@ -31,8 +33,8 @@ public class CommonBeanConfig {
     private final RedisConnectionFactory redisConnectionFactory;
 
     @Bean
-    public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate redisTemplate = new RedisTemplate();
+    public RedisTemplate<String, Serializable> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(redisTemplate.getStringSerializer());
         redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());

@@ -7,6 +7,11 @@ package com.john.auth;
 public final class CommonConst {
 
     /**
+     * redis存储用戶的jwt的key浅醉
+     */
+    public static final String KEY_PREFIX = "john_";
+
+    /**
      * 验证码header
      */
     public static final String CODE_HEADER = "ae81cac2";
@@ -50,7 +55,7 @@ public final class CommonConst {
     /**
      * 用户名密码登录表单提交的路径
      */
-    public static final String AUTH_FORM = "/authentication/form";
+    public static final String AUTH_FORM = "/auth/token";
     /**
      * openid提交的路径,通过openid认证获取用户信息
      */
