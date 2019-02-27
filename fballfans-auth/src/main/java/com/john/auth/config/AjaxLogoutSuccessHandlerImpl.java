@@ -2,6 +2,9 @@ package com.john.auth.config;
 
 import com.alibaba.fastjson.JSON;
 import com.john.Result;
+import com.john.auth.CommonConst;
+import com.john.auth.dto.SysUserOutput;
+import com.john.auth.utils.JwtTokenUtil;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,8 +38,10 @@ public class AjaxLogoutSuccessHandlerImpl implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String authorization = request.getHeader("Authorization");
-        if (redisTemplate.hasKey(authorization)) {
-            redisTemplate.delete(authorization);
+        SysUserOutput userInfo = JwtTokenUtil.getUserInfo(authorization);
+        if (userInfo != null) {
+            redisTemplate.opsForSet()
+                    .remove(CommonConst.KEY_PREFIX + userInfo.getUsername(), userInfo.getJti());
         }
         Result<String> logoutSuccess = Result.<String>build().withCode(HttpStatus.SC_OK).withData("logout success");
         response.getWriter()

@@ -1,11 +1,14 @@
 package com.john.auth.utils;
 
-import com.john.auth.domain.entity.SysUser;
+import com.alibaba.fastjson.JSON;
+import com.john.auth.dto.SysUserOutput;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.beanutils.BeanMap;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +82,11 @@ public class JwtTokenUtil {
         return tokenBody.getExpiration().before(new Date());
     }
 
+    /**
+     * 使用这种方式获取claims,如果jwt已经过期，会抛出异常
+     * @param token
+     * @return
+     */
     private static Claims getTokenBody(String token) {
         return Jwts.parser()
                 .setSigningKey(publicKey)
@@ -87,21 +95,20 @@ public class JwtTokenUtil {
     }
 
     public static void main(String[] args) {
-        SysUser sysUser = new SysUser();
-        sysUser.setId(1L);
-        sysUser.setNickname("abc");
-        sysUser.setUsername("john");
-        sysUser.setRemark("fddff");
-        Map<String, Object> map = new HashMap<>(8);
-        map.put("username", sysUser.getUsername());
-        map.put("nickname", sysUser.getNickname());
-        map.put("id", sysUser.getId());
-        map.put("remark", sysUser.getRemark());
-        String john = generateToken("john", 10, map);
-        LOGGER.info("jwt={}", john);
-        //String jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJuaWNrbmFtZSI6ImFiYyIsInJlbWFyayI6ImZkZGZmIiwiaWQiOjEsInVzZXJuYW1lIjoiam9obiIsInN1YiI6ImpvaG4iLCJleHAiOjE1NTExNjgwMjF9.OX0RauaOG_d_iiWiQ58tXGTJFgjq6Ub2nLP51DhfrfpRM431xrVlsu1l87aCjwwZKUTEq0UBAqkJewUKaZbhcXn7HYSY-CO17ouP4NwQaE51g6DkV7o_LEuTlTQ0rZE7RAqbZ_pfnOVH4tZ6L399vIssGVX0x16qv_0okmbxT5zUKKc7Nu6llQu6Qwa7LUvkdHd21gwL0zjpOJ__-WngBpNf_WOi5A9IRyjOwL1ig0d3aaKYqzt-rbwmEIPXL0_QA1YDrY-zf5vO6zplZ2bWAwFWxAAjE5iflfzrGbrhBpeEou-edbIY4f-_Qu19liavU9-3GB9pk4n4gTMtzslrQA";
-        //System.out.println(isExpiration(jwt));
-        //System.out.println(Jwts.parser().setSigningKey(publicKey).isSigned(jwt));;
+
+    }
+
+    public static SysUserOutput getUserInfo(String jwt) {
+        if (StringUtils.isBlank(jwt)) {
+            return null;
+        }
+        jwt = jwt.replace("Bearer ", "");
+        String[] split = jwt.split("\\.");
+        if (split.length < 3) {
+            return null;
+        }
+        String payload = new String(Base64.decodeBase64(split[1]));
+        return JSON.parseObject(payload, SysUserOutput.class);
     }
 
     private static Map<String, Object> bean2map(Object bean) {

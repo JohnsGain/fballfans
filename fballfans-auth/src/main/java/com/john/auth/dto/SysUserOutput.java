@@ -36,6 +36,16 @@ public class SysUserOutput {
 
     private Set<SysRole> sysRoles;
 
+    private Long exp;
+
+    public Long getExp() {
+        return exp;
+    }
+
+    public void setExp(Long exp) {
+        this.exp = exp;
+    }
+
     public Long getId() {
         return id;
     }

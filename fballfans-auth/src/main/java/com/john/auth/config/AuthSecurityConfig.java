@@ -4,6 +4,7 @@ import com.john.auth.CommonConst;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -22,7 +23,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 
 /**
  * EnableGlobalMethodSecurity 注解式为了启用全局方法级安全，即使@PreAuthorize,@PostAuthorize等注解生效
@@ -43,26 +45,33 @@ import org.springframework.stereotype.Component;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private AuthenticationEntryPoint authenticationEntryPoint;
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
+    private final AuthenticationUserDetailsService authenticationUserDetailsService;
+
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    private final AuthenticationFailureHandler authenticationFailureHandler;
+
+    private final UserDetailsService userDetailsService;
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final LogoutSuccessHandler logoutSuccessHandler;
+
+    private final RedisTemplate<String, Serializable> redisTemplate;
 
     @Autowired
-    private AuthenticationUserDetailsService authenticationUserDetailsService;
-
-    @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
-
-    @Autowired
-    private AuthenticationFailureHandler authenticationFailureHandler;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private LogoutSuccessHandler logoutSuccessHandler;
+    public AuthSecurityConfig(AuthenticationEntryPoint authenticationEntryPoint, AuthenticationUserDetailsService authenticationUserDetailsService, AuthenticationSuccessHandler authenticationSuccessHandler, AuthenticationFailureHandler authenticationFailureHandler, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder, LogoutSuccessHandler logoutSuccessHandler, RedisTemplate<String, Serializable> redisTemplate) {
+        this.authenticationEntryPoint = authenticationEntryPoint;
+        this.authenticationUserDetailsService = authenticationUserDetailsService;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.authenticationFailureHandler = authenticationFailureHandler;
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+        this.logoutSuccessHandler = logoutSuccessHandler;
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      * 我们使用SessionCreationPolicy.STATELESS无状态的Session机制（即Spring不使用HTTPSession），
@@ -184,6 +193,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public KanBanPreAuthenticationFilter preAuthenticationFilter() throws Exception {
         KanBanPreAuthenticationFilter filter = new KanBanPreAuthenticationFilter(authenticationManager());
+        filter.setRedisTemplate(redisTemplate);
         //filter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         //filter.setContinueFilterChainOnUnsuccessfulAuthentication(false);
         //因为默认这个过滤器认证不通过，还要继续用过滤链下面的过滤器继续认证，所以这里没有实现失败处理器

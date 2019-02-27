@@ -42,32 +42,24 @@ public class MyAuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthent
         UsernamePasswordAuthenticationToken tokens = (UsernamePasswordAuthenticationToken) authentication;
         tokens.eraseCredentials();
         SysUser sysUser = (SysUser) authentication.getPrincipal();
-        SysUserOutput output = new SysUserOutput();
-        BeanUtils.copyProperties(sysUser, output);
-        output.setJti(System.nanoTime());
+        long jti = System.nanoTime();
         Map<String, Object> map = new HashMap<>(8);
         map.put("username", sysUser.getUsername());
         map.put("nickname", sysUser.getNickname());
         map.put("id", sysUser.getId());
         map.put("remark", sysUser.getRemark());
         map.put("telephone", sysUser.getTelephone());
-        map.put("jti", output.getJti());
+        map.put("jti", jti);
         String jwt = JwtTokenUtil.generateToken(sysUser.getUsername(), 600, map);
         JwtTokenOutput tokenOutput = new JwtTokenOutput();
         tokenOutput.setAccessToken(jwt);
-        tokenOutput.setTokenType("jwt");
+        tokenOutput.setTokenType("Bearer");
         tokenOutput.setExpiresIn(600 * 1000L);
         map.clear();
         map.put("scope", "refresh");
-        tokenOutput.setAccessToken(JwtTokenUtil.generateToken(sysUser.getUsername(), 3600 * 24 * 7, map));
+        tokenOutput.setRefreshToken(JwtTokenUtil.generateToken(sysUser.getUsername(), 3600 * 24 * 7, map));
 
-        //String token = UUID.randomUUID().toString().replaceAll("-", "");
-        //JSONObject objec = new JSONObject();
-        //objec.put("authentication", authentication);
-        //objec.put("token", token);
-        //redisTemplate.opsForValue().set(token, tokens);
-        //redisTemplate.expire(token, 600, TimeUnit.SECONDS);
-        redisTemplate.opsForSet().add(CommonConst.KEY_PREFIX + sysUser.getUsername() + output.getJti(), jwt);
+        redisTemplate.opsForSet().add(CommonConst.KEY_PREFIX + sysUser.getUsername(), jti);
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(JSONObject.toJSONString(tokenOutput));
     }
