@@ -1,7 +1,5 @@
 package com.john.auth.dto;
 
-import com.john.auth.domain.entity.SysRole;
-
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -34,9 +32,17 @@ public class SysUserOutput {
 
     private LocalDateTime createTime;
 
-    private Set<SysRole> sysRoles;
-
     private Long exp;
+
+    private Set<String> authorities;
+
+    public Set<String> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<String> authorities) {
+        this.authorities = authorities;
+    }
 
     public Long getExp() {
         return exp;
@@ -134,11 +140,4 @@ public class SysUserOutput {
         this.createTime = createTime;
     }
 
-    public Set<SysRole> getSysRoles() {
-        return sysRoles;
-    }
-
-    public void setSysRoles(Set<SysRole> sysRoles) {
-        this.sysRoles = sysRoles;
-    }
 }

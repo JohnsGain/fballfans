@@ -6,6 +6,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.DefaultJwtSigner;
+import io.jsonwebtoken.impl.crypto.JwtSigner;
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +64,7 @@ public class JwtTokenUtil {
                 .setAudience("aud")
                 .setSubject(subject)
                 .setExpiration(new Date(System.currentTimeMillis() + expirationSeconds * 1000))
-                .signWith(privateKey, SignatureAlgorithm.RS256)
+                .signWith(privateKey, getAlgorithm())
                 .compact();
     }
 
@@ -94,8 +96,24 @@ public class JwtTokenUtil {
                 .getBody();
     }
 
-    public static void main(String[] args) {
+    /**
+     * 获取加密算法
+     */
+    private static SignatureAlgorithm getAlgorithm() {
+        return SignatureAlgorithm.RS256;
+    }
 
+    public static boolean isSignKey(String token) {
+        //JwtSigner signer = new DefaultJwtSigner(getAlgorithm(), );
+        return Jwts.parser()
+                .setSigningKey(publicKey)
+                .isSigned(token);
+    }
+
+    public static void main(String[] args) {
+        String deo = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZENhcmQiOiIiLCJhdXRoU3RhdHVzIjoi6K6k6K-B5LitIiwicm9sZXMiOlsiTkVUX1VTRVIiXSwiZnVsbE5hbWUiOiLlk4jlk4jlk4giLCJ1c2VySWQiOiJlMzUwYTdjODYyMTI0ZTE3YWE4OWI2ODM0ODRiN2JmYyIsImNlbGxwaG9uZSI6IjE3Nzg1MjcyMTg3IiwicGVybXMiOlsicGVyc29uYWw6KiJdLCJjbGFzcyI6ImNvbS5kZGIuY29tbW9uLnVzZXIuTG9naW5Vc2VyIiwianRpIjoiOTA5NjQ5MjcyNDYzMDQ1NSIsInVzZXJuYW1lIjoiMTc3ODUyNzIxODciLCJpc3MiOiJEREIiLCJhdWQiOiJHQVRFV0FZIiwic3ViIjoiMTc3ODUyNzIxODciLCJleHAiOjE1NTIxMjUxMDYsIm5iZiI6MTU1MTI2MTEwNn0.us48ysis_5IIInfzQB9sNn0U4qIIYJrdp6RK65bx_jo";
+        Claims tokenBody = getTokenBody(deo);
+        System.out.println(isSignKey(deo));
     }
 
     public static SysUserOutput getUserInfo(String jwt) {
@@ -116,4 +134,5 @@ public class JwtTokenUtil {
         new BeanMap(bean).forEach((k, v) -> map.put(String.valueOf(k), v));
         return map;
     }
+
 }

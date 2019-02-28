@@ -4,13 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.john.auth.CommonConst;
 import com.john.auth.domain.entity.SysUser;
 import com.john.auth.dto.JwtTokenOutput;
-import com.john.auth.dto.SysUserOutput;
 import com.john.auth.utils.JwtTokenUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +20,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangjuwa
@@ -50,6 +51,12 @@ public class MyAuthenticationSuccessHandlerImpl extends SavedRequestAwareAuthent
         map.put("remark", sysUser.getRemark());
         map.put("telephone", sysUser.getTelephone());
         map.put("jti", jti);
+        Set<String> collect = sysUser.getAuthorities()
+                .parallelStream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+        //JSONArray objects = JSONArray.parseArray(JSON.toJSONString(collect));
+        map.put("authorities", collect);
         String jwt = JwtTokenUtil.generateToken(sysUser.getUsername(), 600, map);
         JwtTokenOutput tokenOutput = new JwtTokenOutput();
         tokenOutput.setAccessToken(jwt);

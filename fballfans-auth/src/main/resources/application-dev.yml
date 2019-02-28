@@ -9,8 +9,6 @@ spring:
     username: root
     password: yu718580
     driver-class-name: com.mysql.jdbc.Driver
-    max-active: 1000
-    max-idle: 100
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
@@ -21,9 +19,10 @@ spring:
         prepStmtCacheSize: 250
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
-      connection-timeout: 30000
+      connection-timeout: 10000
       maximum-pool-size: 100
       minimum-idle: 5
+      idle-timeout: 30000
 
 # mybatis配置
 mybatis:

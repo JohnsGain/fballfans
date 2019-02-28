@@ -5,11 +5,15 @@ import com.john.auth.dto.SysUserOutput;
 import com.john.auth.utils.JwtTokenUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangjuwa
@@ -28,23 +32,15 @@ public class KanBanAuthenticationUserDetailsServiceImpl implements Authenticatio
         }
         SysUserOutput userInfo = JwtTokenUtil.getUserInfo(principal);
         if (userInfo != null) {
-            UserDetails details = new SysUser();
+            SysUser details = new SysUser();
             BeanUtils.copyProperties(userInfo, details);
+            Set<String> authorities = userInfo.getAuthorities();
+            Set<GrantedAuthority> authoritySet = authorities.parallelStream()
+                    .map(item -> (GrantedAuthority) () -> item)
+                    .collect(Collectors.toSet());
+            details.setAuthorities(authoritySet);
             return details;
         }
-        //Object ob = redisTemplate.opsForValue().get(principal);
-        //Authentication authentication;
-        //if (ob != null) {
-        //    authentication = (Authentication) ob;
-        //    SysUser principal1 = (SysUser) authentication.getPrincipal();
-        //    if (principal1 != null) {
-        //        return principal1;
-        //    }
-        //}
-        //if (!StringUtils.isEmpty(principal)) {
-        //    //return new KanBanUserDetails(new KanBanUser(principal));
-        //    return new User("username", "123456", AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
-        //}
         throw new RuntimeException("用户不存在");
     }
 }

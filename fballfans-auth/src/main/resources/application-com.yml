@@ -11,8 +11,6 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.jdbc.Driver
-    max-active: 1000
-    max-idle: 100
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource
     hikari:

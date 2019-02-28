@@ -1,5 +1,6 @@
 package com.john.auth.domain.entity;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -44,6 +45,8 @@ public class SysUser implements Serializable, UserDetails {
     private LocalDateTime createTime;
 
     private Set<SysRole> sysRoles;
+
+    private Collection<? extends GrantedAuthority> authorities;
 
     public Long getId() {
         return id;
@@ -108,12 +111,19 @@ public class SysUser implements Serializable, UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (CollectionUtils.isNotEmpty(this.authorities)) {
+            return authorities;
+        }
         Set<GrantedAuthority> list = new HashSet<>(16);
         for (SysRole item : sysRoles) {
             list.add(item);
             list.addAll(item.getSysAcls());
         }
         return list;
+    }
+
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override

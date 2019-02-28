@@ -1,5 +1,6 @@
 package com.john.auth.config;
 
+import com.alibaba.fastjson.JSON;
 import com.john.auth.CommonConst;
 import com.john.auth.dto.SysUserOutput;
 import com.john.auth.utils.JwtTokenUtil;
@@ -14,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author zhangjuwa
@@ -49,6 +52,12 @@ public class KanBanPreAuthenticationFilter extends AbstractPreAuthenticatedProce
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
         String jwt = request.getHeader(SSO_TOKEN);
+        if (!StringUtils.hasText(jwt)) {
+            return null;
+        }
+        if (!JwtTokenUtil.isSignKey(jwt)) {
+            return null;
+        }
         if (request instanceof FirewalledRequest) {
             //StrictHttpFirewall firewall = (StrictHttpFirewall) request;
             FirewalledRequest firewalledRequest = (FirewalledRequest) request;
@@ -72,8 +81,8 @@ public class KanBanPreAuthenticationFilter extends AbstractPreAuthenticatedProce
         }
         //验证jwt是否过期
 
-        boolean bearer = JwtTokenUtil.isExpiration(jwt.replace("Bearer ", ""));
-        if (userInfo.getExp() < System.currentTimeMillis()) {
+        //boolean bearer = JwtTokenUtil.isExpiration(jwt.replace("Bearer ", ""));
+        if (userInfo.getExp() * 1000 < System.currentTimeMillis()) {
             Map<String, Object> map = new HashMap<>(8);
             map.put("username", userInfo.getUsername());
             map.put("nickname", userInfo.getNickname());
@@ -81,6 +90,8 @@ public class KanBanPreAuthenticationFilter extends AbstractPreAuthenticatedProce
             map.put("remark", userInfo.getRemark());
             map.put("telephone", userInfo.getTelephone());
             map.put("jti", userInfo.getJti());
+            Set<String> collect = userInfo.getAuthorities();
+            map.put("authorities", collect);
             //刷新jwt
             jwt = JwtTokenUtil.generateToken(userInfo.getUsername(), 600, map);
         }
@@ -104,5 +115,11 @@ public class KanBanPreAuthenticationFilter extends AbstractPreAuthenticatedProce
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         //super.unsuccessfulAuthentication(request, response, failed);
         LOGGER.warn(failed.getLocalizedMessage());
+    }
+
+    public static void main(String[] args) {
+        String deo = "{\"nickname\":\"bbb\",\"id\":1,\"jti\":542981795039065,\"authorities\":[\"PERMISSION_FARMER_MANAGE\",\"ROLE_APPROVAL\",\"ROLE_ADMIN\"],\"username\":\"tom\",\"iss\":\"iss\",\"aud\":\"aud\",\"sub\":\"tom\",\"exp\":1551255410}";
+        SysUserOutput output = JSON.parseObject(deo, SysUserOutput.class);
+        System.out.println(output);
     }
 }
