@@ -2,8 +2,8 @@ package com.john.auth.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.john.Result;
-import org.apache.http.HttpStatus;
-import org.springframework.boot.autoconfigure.web.ErrorController;
+import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +32,7 @@ public class MainsiteErrorController implements ErrorController {
         if (attribute instanceof BadCredentialsException) {
             BadCredentialsException e = (BadCredentialsException) attribute;
             response.setContentType("application/json;charset=utf-8");
-            Result<String> stringResult = Result.<String>build().withCode(HttpStatus.SC_UNAUTHORIZED).withData(e.getMessage());
+            Result<String> stringResult = Result.<String>build().withCode(HttpStatus.UNAUTHORIZED.value()).withData(e.getMessage());
             return JSON.toJSONString(stringResult);
         }
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");

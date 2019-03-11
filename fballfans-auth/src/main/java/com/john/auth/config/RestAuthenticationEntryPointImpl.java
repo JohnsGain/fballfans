@@ -2,7 +2,7 @@ package com.john.auth.config;
 
 import com.alibaba.fastjson.JSON;
 import com.john.Result;
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
@@ -32,7 +32,7 @@ public class RestAuthenticationEntryPointImpl implements AuthenticationEntryPoin
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         response.setContentType("application/json;charset=utf-8");
-        Result<String> stringResult = Result.<String>build().withCode(HttpStatus.SC_UNAUTHORIZED).withData("未授权");
+        Result<String> stringResult = Result.<String>build().withCode(HttpStatus.UNAUTHORIZED.value()).withData("未授权");
         response.getWriter().write(JSON.toJSONString(stringResult));
         //response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }

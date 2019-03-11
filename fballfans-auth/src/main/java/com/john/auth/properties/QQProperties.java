@@ -1,7 +1,5 @@
 package com.john.auth.properties;
 
-import org.springframework.boot.autoconfigure.social.SocialProperties;
-
 /**
  * @Author zhangjuwa
  * @Description:

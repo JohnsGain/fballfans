@@ -53,4 +53,4 @@ jwt:
     expiration-seconds: 864000
 
 auth:
-  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico
+  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error

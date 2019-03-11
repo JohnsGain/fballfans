@@ -8,8 +8,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authentication.dao.ReflectionSaltSource;
-import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -96,7 +94,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(logoutSuccessHandler)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/needlogin", "/hello", CommonConst.IMAGE_URL,
+                .antMatchers("/auth/needlogin", "/hello", CommonConst.IMAGE_URL,"/error",
                         CommonConst.AUTH_FORM, CommonConst.ICON)
                 .permitAll()
                 //.anyRequest()
@@ -206,7 +204,7 @@ public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder);
-        SaltSource saltSource = new ReflectionSaltSource();
+        //SaltSource saltSource = new ReflectionSaltSource();
         //provider.setSaltSource(item -> "123");
         return provider;
     }

@@ -5,9 +5,9 @@ import com.john.Result;
 import com.john.auth.CommonConst;
 import com.john.auth.dto.SysUserOutput;
 import com.john.auth.utils.JwtTokenUtil;
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -43,8 +43,9 @@ public class AjaxLogoutSuccessHandlerImpl implements LogoutSuccessHandler {
             redisTemplate.opsForSet()
                     .remove(CommonConst.KEY_PREFIX + userInfo.getUsername(), userInfo.getJti());
         }
-        Result<String> logoutSuccess = Result.<String>build().withCode(HttpStatus.SC_OK).withData("logout success");
+        Result<String> logoutSuccess = Result.<String>build().withCode(HttpStatus.OK.value()).withData("logout success");
         response.getWriter()
                 .write(JSON.toJSONString(logoutSuccess));
     }
+
 }

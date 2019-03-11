@@ -1,10 +1,8 @@
 package com.john.auth.config;
 
-import com.alibaba.fastjson.JSON;
 import com.john.auth.CommonConst;
 import com.john.auth.dto.SysUserOutput;
 import com.john.auth.utils.JwtTokenUtil;
-import org.apache.catalina.connector.RequestFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
-import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
@@ -58,15 +55,27 @@ public class KanBanPreAuthenticationFilter extends AbstractPreAuthenticatedProce
         if (!JwtTokenUtil.isSignKey(jwt)) {
             return null;
         }
-        if (request instanceof FirewalledRequest) {
-            //StrictHttpFirewall firewall = (StrictHttpFirewall) request;
-            FirewalledRequest firewalledRequest = (FirewalledRequest) request;
-            RequestFacade facade = (RequestFacade) firewalledRequest.getRequest();
-            String requestURI = facade.getRequestURI();
-            for (String permit : permits) {
-                if (pathMatcher.match(permit, requestURI)) {
-                    return jwt;
-                }
+        //if (request instanceof FirewalledRequest) {
+        //    //StrictHttpFirewall firewall = (StrictHttpFirewall) request;
+        //    FirewalledRequest firewalledRequest = (FirewalledRequest) request;
+        //    ServletRequest servletRequest = firewalledRequest.getRequest();
+        //    if (servletRequest instanceof RequestFacade) {
+        //        ((RequestFacade) servletRequest).getRequestURI()
+        //        RequestFacade facade = (RequestFacade) servletRequest;
+        //        String requestURI = facade.getRequestURI();
+        //        for (String permit : permits) {
+        //            if (pathMatcher.match(permit, requestURI)) {
+        //                return jwt;
+        //            }
+        //        }
+        //    }
+        //    return jwt;
+        //}
+        String requestURI = request.getRequestURI();
+        LOGGER.info("requestURI = {}", requestURI);
+        for (String permit : permits) {
+            if (pathMatcher.match(permit, requestURI)) {
+                return null;
             }
         }
 
@@ -77,7 +86,8 @@ public class KanBanPreAuthenticationFilter extends AbstractPreAuthenticatedProce
         }
         Boolean member = redisTemplate.opsForSet().isMember(CommonConst.KEY_PREFIX + userInfo.getUsername(), userInfo.getJti());
         if (!member) {
-            throw new BadCredentialsException("无效的token");
+            //throw new BadCredentialsException("无效的token");
+            return null;
         }
         //验证jwt是否过期
 
@@ -117,9 +127,4 @@ public class KanBanPreAuthenticationFilter extends AbstractPreAuthenticatedProce
         LOGGER.warn(failed.getLocalizedMessage());
     }
 
-    public static void main(String[] args) {
-        String deo = "{\"nickname\":\"bbb\",\"id\":1,\"jti\":542981795039065,\"authorities\":[\"PERMISSION_FARMER_MANAGE\",\"ROLE_APPROVAL\",\"ROLE_ADMIN\"],\"username\":\"tom\",\"iss\":\"iss\",\"aud\":\"aud\",\"sub\":\"tom\",\"exp\":1551255410}";
-        SysUserOutput output = JSON.parseObject(deo, SysUserOutput.class);
-        System.out.println(output);
-    }
 }
