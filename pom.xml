@@ -14,14 +14,14 @@
         <module>fballfans-shiro</module>
     </modules>
     <!--<parent>-->
-        <!--<groupId>org.springframework.boot</groupId>-->
-        <!--<artifactId>spring-boot-starter-parent</artifactId>-->
-        <!--<version>1.5.18.RELEASE</version>-->
+    <!--<groupId>org.springframework.boot</groupId>-->
+    <!--<artifactId>spring-boot-starter-parent</artifactId>-->
+    <!--<version>1.5.18.RELEASE</version>-->
     <!--</parent>-->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.6.RELEASE</version>
+        <version>2.1.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <properties>
@@ -34,6 +34,8 @@
         <fastjson.version>1.2.47</fastjson.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <jjwt.version>0.10.5</jjwt.version>
+        <activiti-dependencies.version>7.1.3</activiti-dependencies.version>
+        <spring-social-version>1.1.6.RELEASE</spring-social-version>
     </properties>
     <dependencies>
         <dependency>
@@ -92,6 +94,14 @@
             <artifactId>validation-api</artifactId>
             <version>${validation-api.version}</version>
         </dependency>
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.activiti.dependencies/activiti-dependencies &ndash;&gt;-->
+        <!--<dependency>-->
+        <!--<groupId>org.activiti.dependencies</groupId>-->
+        <!--<artifactId>activiti-dependencies</artifactId>-->
+        <!--<version>7.0.0.GA</version>-->
+        <!--<type>pom</type>-->
+        <!--</dependency>-->
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -101,6 +111,13 @@
                 <version>Finchley.SR2</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.activiti.dependencies</groupId>
+                <artifactId>activiti-dependencies</artifactId>
+                <version>${activiti-dependencies.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -125,5 +142,14 @@
         </plugins>
     </build>
 
-
+    <repositories>
+        <repository>
+            <id>alfresco</id>
+            <name>Activiti Releases</name>
+            <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 </project>

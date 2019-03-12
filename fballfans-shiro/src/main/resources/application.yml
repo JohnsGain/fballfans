@@ -1,15 +1,17 @@
-server:
-  port: 8999
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: fballfans-auth
   redis:
     cluster:
       nodes: DDBtest008:6379, DDBtest008:6380, DDBtest008:6381, DDBtest008:6382, DDBtest008:6383, DDBtest008:6384
   datasource:
-    url: jdbc:mysql://192.168.1.108:3306/test
+    url: jdbc:mysql://192.168.1.108:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: root
+#    driver-class-name: com.mysql.cj.jdbc.Driver
     driver-class-name: com.mysql.jdbc.Driver
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource
@@ -24,34 +26,15 @@ spring:
       connection-timeout: 30000
       maximum-pool-size: 100
       minimum-idle: 5
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-# mybatis配置
-mybatis:
-  type-aliases-package: com.john.domain.entity
-  configuration:
-    default-fetch-size: 100
-    default-statement-timeout: 10000
-    #下划线匹配驼峰
-    map-underscore-to-camel-case: true
 
-#management:
-#  security:
 
-#    enabled: false
-name: ccc
+  activiti:
+    database-schema: ACT
+    history-level: full
+    database-schema-update: true
+    db-history-used: true
+    # 自动建表
+#
 
-# jwt 配置
-jwt:
-  audience:
-    iss: DDB
-    aud: GATEWAY
-    base64-secret: ZDY1MTA3OTYxMjRmNGRhOTgzMTA3M2M0NTVmMjY3NTE=
-#    expiration-seconds: 86400
-#    暂时改为10天
-    expiration-seconds: 864000
-
-auth:
-  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error
+#    为true表示使用历史表，如果不配置，则工程启动后可以检查数据库，只建立了17张表，
+#历史表没有建立，则流程图及运行节点无法展示（暂未找到可行方式）
