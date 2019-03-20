@@ -9,9 +9,8 @@
     <packaging>pom</packaging>
     <version>1.0.0</version>
     <modules>
-        <module>fballfans-core</module>
+        <!--<module>fballfans-core</module>-->
         <module>fballfans-auth</module>
-        <module>fballfans-shiro</module>
     </modules>
     <!--<parent>-->
     <!--<groupId>org.springframework.boot</groupId>-->
@@ -126,10 +125,7 @@
             <!--Spring Boot Maven plugin能够将Spring Boot应用打包为可执行的jar或war文件，
             然后以通常的方式运行Spring Boot应用。Spring Boot Maven plugin能够将Spring
             Boot应用打包为可执行的jar或war文件，然后以通常的方式运行Spring Boot应用。-->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

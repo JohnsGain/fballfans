@@ -1,6 +1,10 @@
 spring:
   profiles:
 #公司配置
-    active: com
+#    active: com
 #    家用配置
-#    active: dev
+    active: dev
+  main:
+    allow-bean-definition-overriding: true
+auth:
+  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit
