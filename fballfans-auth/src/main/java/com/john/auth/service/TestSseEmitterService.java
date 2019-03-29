@@ -6,13 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * @author zhangjuwa
+ * @author ""
  * @date 2019/3/20
  * @since jdk1.8
  **/
@@ -22,22 +23,19 @@ public class TestSseEmitterService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestSseEmitterService.class);
 
-    private CameraCaptureImageImpl cameraCaptureImage;
+    private SseEmitter emitter;
 
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/1 * * * * ?")
     public void sendMessage() throws IOException {
-        if (cameraCaptureImage != null) {
-            cameraCaptureImage.send(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        if (emitter != null) {
+
+            emitter.send(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
         } else {
             LOGGER.info("为空");
         }
     }
 
-    public CameraCaptureImageImpl getCameraCaptureImage() {
-        return cameraCaptureImage;
-    }
-
-    public void setCameraCaptureImage(CameraCaptureImageImpl cameraCaptureImage) {
-        this.cameraCaptureImage = cameraCaptureImage;
+    public void setCameraCaptureImage(SseEmitter emitter) {
+        this.emitter = emitter;
     }
 }

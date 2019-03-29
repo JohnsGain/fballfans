@@ -2,7 +2,7 @@ package com.john.auth.properties;
 
 /**
  * spring autoconfig 2.0以上版本配置还没有集成  SocialProperties 这个配置类，所以这里自定义一个
- * @author zhangjuwa
+ * @author ""
  * @date 2019/3/11
  * @since jdk1.8
  */

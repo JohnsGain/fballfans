@@ -6,5 +6,8 @@ spring:
     active: dev
   main:
     allow-bean-definition-overriding: true
+  mvc:
+    async:
+      request-timeout: PT0S
 auth:
   permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit

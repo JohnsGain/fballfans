@@ -18,7 +18,7 @@ import org.springframework.social.config.annotation.EnableSocial;
 import java.io.Serializable;
 
 /**
- * @Author zhangjuwa
+ * @Author ""
  * @Description:
  * @Date 2018/10/7
  * @Since jdk1.8

@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author zhangjuwa
+ * @author ""
  * @date 2019/2/15
  * @since jdk1.8
  */

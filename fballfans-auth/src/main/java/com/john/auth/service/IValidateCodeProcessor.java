@@ -9,7 +9,7 @@ import java.io.IOException;
 
 /**
  * @date 2019/2/22
- * @author zhangjuwa
+ * @author ""
  * @since jdk1.8
  **/
 public interface IValidateCodeProcessor {

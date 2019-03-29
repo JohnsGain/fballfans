@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * 退出成功处理
  *
- * @author zhangjuwa
+ * @author ""
  * @date 2019/2/25
  * @since jdk1.8
  */

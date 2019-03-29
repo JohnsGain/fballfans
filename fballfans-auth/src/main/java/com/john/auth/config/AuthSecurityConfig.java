@@ -28,7 +28,7 @@ import java.io.Serializable;
  * EnableGlobalMethodSecurity 注解式为了启用全局方法级安全，即使@PreAuthorize,@PostAuthorize等注解生效
  * 使用方法：@PostAuthorize ("returnObject.type == authentication.name"): 确保登录用户只能获取他自己的用户对象
  *
- * @author zhangjuwa
+ * @author ""
  * @PreAuthorize("hasRole('ADMIN')")
  * @PreAuthorize("hasRole('ADMIN') AND hasRole('DBA')")
  * @PreAuthorize("hasAuthority('ROLE_USER') or hasAuthority('ROLE_SUPER_ADMINISTRATOR')")

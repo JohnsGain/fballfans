@@ -17,7 +17,7 @@ server:
 #  spring.redis.pool.min-idle: 0
 spring:
   application:
-    name: fballfans-auth
+    name: threefei-auth
 #  redis:
 #    cluster:
 #      nodes: 211.159.185.172:6379

@@ -1,7 +1,7 @@
 package com.john.auth.properties;
 
 /**
- * @Author zhangjuwa
+ * @Author ""
  * @Description:
  * @Date 2018/9/23
  * @Since jdk1.8

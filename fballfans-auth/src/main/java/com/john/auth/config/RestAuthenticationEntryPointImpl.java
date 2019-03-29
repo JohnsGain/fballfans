@@ -23,7 +23,7 @@ import java.io.IOException;
  * 会重定向到登录路径，z这里配置自定义的 AuthenticationEntryPoint 实现，简单返回401给前端
  * {@link ExceptionTranslationFilter#sendStartAuthentication(HttpServletRequest, HttpServletResponse, FilterChain, AuthenticationException)}
  *
- * @author zhangjuwa
+ * @author ""
  * @date 2019/2/15
  * @since jdk1.8
  */

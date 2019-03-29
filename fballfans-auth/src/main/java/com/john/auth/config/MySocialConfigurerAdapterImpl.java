@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 
 /**
  * {@link SocialConfigurerAdapter}
- * @author zhangjuwa
+ * @author ""
  * @date 2019/3/11
  * @since jdk1.8
  */

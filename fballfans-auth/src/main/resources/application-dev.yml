@@ -3,7 +3,7 @@ spring:
     host: 211.159.185.172
     password: yu718580
   application:
-    name: useradmin
+    name: threefei-auth
   datasource:
     url: jdbc:mysql://211.159.185.172:3306/warehouse?useUnicode=yes&characterEncode=utf-8&useSSL=false
     username: root
@@ -23,7 +23,10 @@ spring:
       maximum-pool-size: 100
       minimum-idle: 5
       idle-timeout: 30000
-
+  security:
+    user:
+      name: zplan
+      password: 123456
 # mybatis配置
 mybatis:
   type-aliases-package: com.john.auth.domain.entity
@@ -37,3 +40,33 @@ imooc:
   security:
     browser:
       loginPage: /security/needlogin
+
+server:
+  port: 8777
+management:
+  endpoints:
+    web:
+      exposure:
+#        // SpringBootActuator监控暴露所有接口
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    #    SpringBootAdmin本身作为一个Eureka客户端被发现，这里由于SpringBootAdmin需要进行登录，因此，此处配置SpringBootAdmin登录时使用的用户名
+    metadata-map:
+      user:
+        name: zplan
+        password: 123456
+    health-check-url-path: /actuator/health
+    lease-renewal-interval-in-seconds: 10
+  client:
+    service-url:
+      #      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@127.0.0.1:8761/eureka/
+
+logging:
+  path: logs/log

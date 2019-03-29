@@ -9,8 +9,11 @@
     <packaging>pom</packaging>
     <version>1.0.0</version>
     <modules>
-        <!--<module>fballfans-core</module>-->
+        <module>fballfans-core</module>
         <module>fballfans-auth</module>
+        <module>fballfans-admin</module>
+        <module>fballfans-eureka</module>
+        <module>shenduxuexi</module>
     </modules>
     <!--<parent>-->
     <!--<groupId>org.springframework.boot</groupId>-->

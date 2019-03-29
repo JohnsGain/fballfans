@@ -3,7 +3,7 @@ package com.john.auth.dto;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * @author zhangjuwa
+ * @author ""
  * @date 2019/2/26
  * @since jdk1.8
  */
