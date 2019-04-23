@@ -1,0 +1,14 @@
+
+import com.skynet.DESede;//工具类包引用
+
+public class Test {
+
+    public static void main(String[] args) throws Exception {  
+    	String key = "BBAA2C1C435B9F8CEC01FFB996B9A665";
+    	String test = " This is test text! ";
+    	String testEn = DESede.encrypt(key, test);//执行加密
+    	System.out.println("原文："+test);//原串
+    	System.out.println("密文："+testEn);//加密后
+    	System.out.println("解密后："+DESede.decrypt(key, testEn));//执行解密
+    }
+}

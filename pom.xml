@@ -13,7 +13,7 @@
         <module>fballfans-auth</module>
         <module>fballfans-admin</module>
         <module>fballfans-eureka</module>
-        <module>shenduxuexi</module>
+        <module>elasticsearch6</module>
     </modules>
     <!--<parent>-->
     <!--<groupId>org.springframework.boot</groupId>-->

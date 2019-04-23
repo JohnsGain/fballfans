@@ -25,6 +25,10 @@ public class Result<T> {
     private Result() {
     }
 
+    public Result(T data) {
+        this.data = data;
+    }
+
     public int getCode() {
         return code;
     }

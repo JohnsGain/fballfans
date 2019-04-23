@@ -18,9 +18,9 @@ server:
 spring:
   application:
     name: threefei-auth
-#  redis:
-#    cluster:
-#      nodes: 211.159.185.172:6379
+  redis:
+    cluster:
+      nodes: 211.159.185.172:6379
 
   datasource:
 #    url: jdbc:mysql://192.168.1.108:3306/test
