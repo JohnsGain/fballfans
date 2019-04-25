@@ -1,9 +1,12 @@
 package com.fballfans.elasticsearch.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.GeoPointField;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,7 +32,11 @@ public class Account implements Serializable {
      * 借助@JsonProperty更改ES字段与实体属性的映射关系
      */
 //    @JsonProperty(value = "account_number")
-    private Long accountNumber;
+//    private Long accountNumber;
+    private Long account_number;
+
+    @GeoPointField
+    private GeoPoint geoPoint;
 
     private BigDecimal balance;
 
@@ -43,6 +50,22 @@ public class Account implements Serializable {
     private String city;
     private String state;
 
+    public GeoPoint getGeoPoint() {
+        return geoPoint;
+    }
+
+    public void setGeoPoint(GeoPoint geoPoint) {
+        this.geoPoint = geoPoint;
+    }
+
+    public Long getAccount_number() {
+        return account_number;
+    }
+
+    public void setAccount_number(Long account_number) {
+        this.account_number = account_number;
+    }
+
     public Long getId() {
         return id;
     }
@@ -51,13 +74,13 @@ public class Account implements Serializable {
         this.id = id;
     }
 
-    public Long getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(Long accountNumber) {
-        this.accountNumber = accountNumber;
-    }
+//    public Long getAccountNumber() {
+//        return accountNumber;
+//    }
+//
+//    public void setAccountNumber(Long accountNumber) {
+//        this.accountNumber = accountNumber;
+//    }
 
     public BigDecimal getBalance() {
         return balance;
@@ -143,7 +166,7 @@ public class Account implements Serializable {
     public String toString() {
         return "Account{" +
                 "id=" + id +
-                ", accountNumber=" + accountNumber +
+//                ", accountNumber=" + accountNumber +
                 ", balance=" + balance +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
