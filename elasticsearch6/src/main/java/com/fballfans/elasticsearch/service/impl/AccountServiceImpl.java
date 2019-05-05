@@ -14,12 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
+import org.springframework.data.elasticsearch.core.query.IndexQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author zhangjuwa
@@ -30,6 +34,9 @@ import java.util.ArrayList;
 public class AccountServiceImpl implements IAccountService {
 
     private final IAccountRepository accountRepository;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
     public AccountServiceImpl(IAccountRepository accountRepository) {
@@ -96,6 +103,11 @@ public class AccountServiceImpl implements IAccountService {
         return accountRepository.findByAddressLike(address, PageRequest.of(pageable.getPage(), pageable.getSize(), sort));
     }
 
+    /**
+     * @param pageable
+     * @param address
+     * @return
+     */
     public Page<Account> startwith(Pageable pageable, String address) {
         Sort sort = new Sort(Sort.Direction.DESC, "balance");
         return accountRepository.findByAddressStartingWith(address, PageRequest.of(pageable.getPage(), pageable.getSize(), sort));
@@ -120,13 +132,23 @@ public class AccountServiceImpl implements IAccountService {
         Iterable<Account> all = accountRepository.findAll();
         double latitude = 23;
         double longitude = 100;
-
+        List<IndexQuery> list = new ArrayList<>();
         for (Account account : all) {
+            account.setId((account.getAccount_number() == null) ? 1111 : account.getAccount_number());
             GeoPoint geoPoint = new GeoPoint(latitude + RandomUtils.nextDouble(0, 1),
                     longitude + RandomUtils.nextDouble(0, 2));
             account.setGeoPoint(geoPoint);
+            IndexQuery build = new IndexQueryBuilder()
+                    .withType("_doc")
+                    .withId(account.getId().toString())
+                    .withIndexName("bank")
+                    .withObject(account)
+                    .build();
+            list.add(build);
         }
-        accountRepository.saveAll(all);
+//        accountRepository.saveAll(all);
+        elasticsearchTemplate.bulkIndex(list);
+        elasticsearchTemplate.refresh(Account.class);
     }
 
     @Override

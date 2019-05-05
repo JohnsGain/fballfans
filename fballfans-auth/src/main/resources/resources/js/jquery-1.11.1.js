@@ -8545,7 +8545,7 @@ jQuery.parseXML = function( data ) {
 var
 	// Document location
 	ajaxLocParts,
-	ajaxLocation,
+	ajaxGeoPoint,
 
 	rhash = /#.*$/,
 	rts = /([?&])_=[^&]*/,
@@ -8580,17 +8580,17 @@ var
 // #8138, IE may throw an exception when accessing
 // a field from window.location if document.domain has been set
 try {
-	ajaxLocation = location.href;
+	ajaxGeoPoint = location.href;
 } catch( e ) {
 	// Use the href attribute of an A element
 	// since IE will modify it given document.location
-	ajaxLocation = document.createElement( "a" );
-	ajaxLocation.href = "";
-	ajaxLocation = ajaxLocation.href;
+	ajaxGeoPoint = document.createElement( "a" );
+	ajaxGeoPoint.href = "";
+	ajaxGeoPoint = ajaxGeoPoint.href;
 }
 
 // Segment location into parts
-ajaxLocParts = rurl.exec( ajaxLocation.toLowerCase() ) || [];
+ajaxLocParts = rurl.exec( ajaxGeoPoint.toLowerCase() ) || [];
 
 // Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
 function addToPrefiltersOrTransports( structure ) {
@@ -8828,7 +8828,7 @@ jQuery.extend({
 	etag: {},
 
 	ajaxSettings: {
-		url: ajaxLocation,
+		url: ajaxGeoPoint,
 		type: "GET",
 		isLocal: rlocalProtocol.test( ajaxLocParts[ 1 ] ),
 		global: true,
@@ -9038,7 +9038,7 @@ jQuery.extend({
 		// Add protocol if not provided (#5866: IE7 issue with protocol-less urls)
 		// Handle falsy url in the settings object (#10093: consistency with old signature)
 		// We also use the url parameter if available
-		s.url = ( ( url || s.url || ajaxLocation ) + "" ).replace( rhash, "" ).replace( rprotocol, ajaxLocParts[ 1 ] + "//" );
+		s.url = ( ( url || s.url || ajaxGeoPoint ) + "" ).replace( rhash, "" ).replace( rprotocol, ajaxLocParts[ 1 ] + "//" );
 
 		// Alias method option to type as per ticket #12004
 		s.type = options.method || options.type || s.method || s.type;

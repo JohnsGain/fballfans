@@ -1,8 +1,6 @@
 package com.fballfans.elasticsearch.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
@@ -20,7 +18,7 @@ import java.math.BigDecimal;
  * @since jdk1.8
  **/
 @Document(indexName = "bank", type = "_doc")
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+//@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Account implements Serializable {
 
     private static final long serialVersionUID = 5743473998244677494L;

@@ -2,19 +2,20 @@ package com.fballfans.elasticsearch.service.impl;
 
 import com.fballfans.elasticsearch.entity.Account;
 import com.fballfans.elasticsearch.repository.IAccountRepository;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author zhangjuwa
@@ -79,5 +80,9 @@ public class AccountSearchService {
                 .build();
 
         return accountRepository.search(searchQuery);
+    }
+
+    public List<Account> match(String address) {
+        return Lists.newArrayList(accountRepository.search(QueryBuilders.matchQuery("address", address)));
     }
 }
