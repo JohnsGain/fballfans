@@ -4,8 +4,7 @@ import com.fballfans.elasticsearch.entity.Account;
 import com.fballfans.elasticsearch.repository.IAccountRepository;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,10 +35,12 @@ public class AccountSearchService {
     }
 
     public Page<Account> keyword(org.springframework.data.domain.Pageable pageable, String keyword) {
-        Sort sort = new Sort(Sort.Direction.DESC, "balance");
+//        QueryStringQueryBuilder address = QueryBuilders.queryStringQuery(keyword)
+//                .field("address")
+//                .analyzeWildcard(true);
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(pageable)
-                .withQuery(QueryBuilders.queryStringQuery(keyword))
+                .withQuery(QueryBuilders.queryStringQuery(keyword).field("address"))
                 .build();
         return accountRepository.search(searchQuery);
     }
@@ -83,6 +84,15 @@ public class AccountSearchService {
     }
 
     public List<Account> match(String address) {
-        return Lists.newArrayList(accountRepository.search(QueryBuilders.matchQuery("address", address)));
+        MatchQueryBuilder address1 = QueryBuilders.matchQuery("address", address)
+                .autoGenerateSynonymsPhraseQuery(true)
+      /*  组合匹配（Combination）"minimum_should_match": 3<90%，官方的解释有点搞，感觉描述的有点复杂。描述如下：
+        A positive integer, followed by the less-than symbol, followed by any of the previously mentioned specifiers is a conditional specification.
+                It indicates that if the number of optional clauses is equal to (or less than) the integer, they are all required, but if it’s greater than
+        the integer, the specification applies. In this example: if there are 1 to 3 clauses they are all required, but for 4 or more clauses only 90% are required.*/
+
+                .fuzzyTranspositions(true).minimumShouldMatch("2<90%");
+        return Lists.newArrayList(accountRepository.search(QueryBuilders.matchQuery("address", address)
+                .operator(Operator.OR).minimumShouldMatch("2<90%")));
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author zhangjuwa
@@ -24,6 +25,10 @@ import java.util.List;
 public interface IAccountRepository extends ElasticsearchRepository<Account, Long> {
 
     Page<Account> findByAddress(@Nullable String address, Pageable pageable);
+
+    Optional<List<Account>> findTop5ByAddress(@Nullable String address);
+
+    Optional<Page<Account>> findTop5ByState(Pageable pageable, String state);
 
     Page<Account> findByAddressIgnoreCase(@Nullable String address, Pageable pageable);
 

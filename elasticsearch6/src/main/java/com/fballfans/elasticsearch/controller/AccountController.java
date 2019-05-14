@@ -1,14 +1,20 @@
 package com.fballfans.elasticsearch.controller;
 
 import com.fballfans.elasticsearch.entity.Account;
+import com.fballfans.elasticsearch.repository.IAccountRepository;
 import com.fballfans.elasticsearch.service.impl.AccountServiceImpl;
+import com.google.common.collect.Lists;
 import com.john.Pageable;
 import com.john.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author zhangjuwa
@@ -20,9 +26,12 @@ public class AccountController {
 
     private final AccountServiceImpl accountService;
 
+    private final IAccountRepository accountRepository;
+
     @Autowired
-    public AccountController(AccountServiceImpl accountService) {
+    public AccountController(AccountServiceImpl accountService, IAccountRepository accountRepository) {
         this.accountService = accountService;
+        this.accountRepository = accountRepository;
     }
 
     @GetMapping("{id}")
@@ -123,6 +132,14 @@ public class AccountController {
     public Result<Page<Account>> address(Pageable pageable, @PathVariable(value = "address", required = false) String address) {
         Page<Account> page = accountService.address(pageable, address);
         return new Result<>(page);
+    }
+
+    @GetMapping("top")
+    public Result<List<Account>> top(@RequestParam(value = "address") String address, String state,
+                                     @PageableDefault(sort = {"balance"}, direction = Sort.Direction.DESC) org.springframework.data.domain.Pageable pageable) {
+        Optional<List<Account>> top5ByAddress = accountRepository.findTop5ByAddress(address);
+        List<Account> accounts = top5ByAddress.orElse(Lists.newArrayList());
+        return new Result<>(accounts);
     }
 
 

@@ -28,9 +28,11 @@ public class Account implements Serializable {
 
     /**
      * 借助@JsonProperty更改ES字段与实体属性的映射关系
+     * 字段类型设置为keyword,表明这个字段不需要分词，可以节省空间和提高写性能
      */
 //    @JsonProperty(value = "account_number")
 //    private Long accountNumber;
+//    @Field(type = FieldType.Keyword)
     private Long account_number;
 
     @GeoPointField

@@ -1,6 +1,9 @@
 package com.fballfans.elasticsearch.config;
 
+import bb.Aocnfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +27,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Import(value = Aocnfig.class)
 public class AuthSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private Aocnfig aocnfig;
 
     /**
      * 我们使用SessionCreationPolicy.STATELESS无状态的Session机制（即Spring不使用HTTPSession），

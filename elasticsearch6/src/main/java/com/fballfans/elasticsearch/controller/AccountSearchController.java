@@ -6,15 +6,15 @@ import com.fballfans.elasticsearch.service.impl.AccountSearchService;
 import com.john.Result;
 import io.swagger.annotations.ApiOperation;
 import org.elasticsearch.common.unit.DistanceUnit;
-import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
@@ -165,6 +165,182 @@ public class AccountSearchController {
                 .withSort(SortBuilders.fieldSort("balance").order(SortOrder.DESC))
                 .build();
         List<Account> accounts = elasticsearchTemplate.queryForList(searchQuery, Account.class);
+        return new Result<>(accounts);
+    }
+
+    @GetMapping("commonterms")
+    public Result<List<Account>> commonterms(String text) {
+        CommonTermsQueryBuilder address = QueryBuilders.commonTermsQuery("address", text);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(address)
+                .build();
+        return new Result<>(elasticsearchTemplate.queryForList(searchQuery, Account.class));
+    }
+
+    /**
+     * moreLikeThisQuery: 实现基于内容推荐, 支持实现一句话相似文章查询
+     * {
+     * "more_like_this" : {
+     * "fields" : ["title", "content"],   // 要匹配的字段, 不填默认_all
+     * "like_text" : "text like this one",   // 匹配的文本
+     * }
+     * }
+     * <p>
+     * percent_terms_to_match：匹配项（term）的百分比，默认是0.3
+     * <p>
+     * min_term_freq：一篇文档中一个词语至少出现次数，小于这个值的词将被忽略，默认是2
+     * <p>
+     * max_query_terms：一条查询语句中允许最多查询词语的个数，默认是25
+     * <p>
+     * stop_words：设置停止词，匹配时会忽略停止词
+     * <p>
+     * min_doc_freq：一个词语最少在多少篇文档中出现，小于这个值的词会将被忽略，默认是无限制
+     * <p>
+     * max_doc_freq：一个词语最多在多少篇文档中出现，大于这个值的词会将被忽略，默认是无限制
+     * <p>
+     * min_word_len：最小的词语长度，默认是0
+     * <p>
+     * max_word_len：最多的词语长度，默认无限制
+     * <p>
+     * boost_terms：设置词语权重，默认是1
+     * <p>
+     * boost：设置查询权重，默认是1
+     * <p>
+     * analyzer：设置使用的分词器，默认是使用该字段指定的分词器
+     */
+    @ApiOperation("模糊查询")
+    @GetMapping("morelike")
+    public Result<List<Account>> morelike(String text) {
+        // 要匹配的字段, 不填默认_all
+        MoreLikeThisQueryBuilder address = QueryBuilders.moreLikeThisQuery(new String[]{"address", "state"});
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(address)
+                .build();
+        return new Result<>(elasticsearchTemplate.queryForList(searchQuery, Account.class));
+    }
+
+    /**
+     * 包裹查询, 高于设定分数, 不计算相关性
+     *
+     * @param text
+     * @param pageable
+     * @return
+     */
+    @ApiOperation("包裹查询")
+    @GetMapping("constantscore")
+    public Result<Page<Account>> constantScore(String text,
+                                               @PageableDefault(sort = {"balance"}, direction = Sort.Direction.DESC) Pageable pageable) {
+        ConstantScoreQueryBuilder address = QueryBuilders.constantScoreQuery(QueryBuilders.matchQuery("address", text))
+                .boost(2.0f);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(address)
+                .withPageable(pageable)
+                .build();
+        return new Result<>(elasticsearchTemplate.queryForPage(searchQuery, Account.class));
+    }
+
+    /**
+     * 1.通配符查询, 支持 * 匹配任何字符序列, 包括空
+     * 2.避免* 开始, 会检索大量内容造成效率缓慢
+     * 3.单个字符用?
+     *
+     * @param wildcard
+     * @return
+     */
+    @ApiOperation("通配符查询")
+    @GetMapping("wildcard")
+    public Result<List<Account>> wildcardQuery(String wildcard) {
+        WildcardQueryBuilder address = QueryBuilders.wildcardQuery("address", wildcard);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(address)
+                .build();
+        return new Result<>(elasticsearchTemplate.queryForList(searchQuery, Account.class));
+    }
+
+    /**
+     * scroll查询原理是在第一次查询的时候一次性生成一个快照，根据上一次的查询的id来进行下一次的查询，这个就类似于关系型数据库的游标，
+     * 然后每次滑动都是根据产生的游标id进行下一次查询，这种性能比上面说的分页性能要高出很多，基本都是毫秒级的。 注意：scroll不支持跳页查询。
+     * 使用场景：对实时性要求不高的查询，例如微博或者头条滚动查询。
+     *
+     * @return
+     */
+    @GetMapping("scroll")
+    public Result scroll() {
+
+        return null;
+    }
+
+    @GetMapping("idsquery")
+    public Result<List<Account>> idsquery(@RequestParam List<String> ids) {
+        String[] arr = new String[ids.size()];
+        arr = ids.toArray(arr);
+        IdsQueryBuilder idsQueryBuilder = QueryBuilders.idsQuery()
+                .addIds(arr);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withIndices("bank")
+                .withFilter(idsQueryBuilder).build();
+        List<Account> accounts = elasticsearchTemplate.queryForList(searchQuery, Account.class);
+        return new Result<>(accounts);
+    }
+
+    /**
+     * 如果指定的字段是string类型，模糊查询是基于编辑距离算法来匹配文档。编辑距离的计算基于我们提供的查询词条和被搜索文档。如果指定的字段是数值类型或者日期类型，
+     * 模糊查询基于在字段值上进行加减操作来匹配文档（The fuzzy query uses similarity based on Levenshtein edit distance for  fields, and a
+     * margin on numeric and date fields）。此查询很占用CPU资源，但当需要模糊匹配时它很有用，例如，当用户拼写错误时。
+     *
+     * fuzzyQuery 基于编辑距离 (Levenshtein) 来进行相似搜索, 比如搜索 kimzhy, 可以搜索出 kinzhy(编辑距离为 1)
+     * 为了进行测试说明, 前创建一个索引, 插入几条数据 ka,kab,kib,ba, 我们的搜索源为 ki
+     * 了解更多关于编辑距离 (Levenshtein) 的概念, 请参考:<a href='http://www.cnblogs.com/biyeymyhjob/archive/2012/09/28/2707343.html'></a>
+     * 了解更多编辑距离的算法, 请参考:<a href='http://blog.csdn.net/ironrabbit/article/details/18736185'></a>
+     *  ki — ka 编辑距离为 1
+     *  ki — kab 编辑距离为 2
+     *  ki — kbia 编辑距离为 3
+     *  ki — kib 编辑距离为 1
+     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 0 的时候, 没有结果
+     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 1 的时候, 会出现结果 ka,kib
+     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 2 的时候, 会出现结果 ka,kib,kab
+     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 3 的时候, 会出现结果 ka,kib,kab,kbaa(很遗憾,ES 本身最多只支持到 2, 因此不会出现此结果)
+     *
+     * @param text
+     * @return
+     */
+    @ApiOperation("模糊查询")
+    @GetMapping("fuzzy")
+    public Result<Page<Account>> fuzzy(String field, String text, @PageableDefault(sort = {"balance"}) Pageable pageable, @RequestParam(defaultValue = "0") Integer prefix) {
+        FuzzyQueryBuilder address = QueryBuilders.fuzzyQuery(field, text)
+                //模糊匹配的最大编辑距离(指两个字串之间，由一个转成另一个所需的最少编辑操作次数)
+                .fuzziness(Fuzziness.ONE)
+                //最小前缀配置长度，不传参数就是0
+                .prefixLength(prefix)
+//        控制最大的返回结果
+//                .maxExpansions(100)
+                ;
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
+                .withFilter(address).build();
+        Page<Account> accounts = elasticsearchTemplate.queryForPage(searchQuery, Account.class);
+        return new Result<>(accounts);
+    }
+
+    @ApiOperation("前缀查询")
+    @GetMapping("prefixquery")
+    public Result<Page<Account>> prefixquery(String field, String prefix, @PageableDefault(sort = {"balance"}) Pageable pageable) {
+        PrefixQueryBuilder prefixQueryBuilder = QueryBuilders.prefixQuery(field, prefix);
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
+                .withFilter(prefixQueryBuilder).build();
+        Page<Account> accounts = elasticsearchTemplate.queryForPage(searchQuery, Account.class);
+        return new Result<>(accounts);
+    }
+
+    @ApiOperation("正则表达式查询")
+    @GetMapping("regexquery")
+    public Result<Page<Account>> regexquery(String field, String regex, @PageableDefault(sort = {"balance"}) Pageable pageable) {
+        RegexpQueryBuilder flags = QueryBuilders.regexpQuery(field, regex)
+                //设置支持的正则表达式范围，默认支持所有正则表达式
+                .flags(RegexpFlag.ALL);
+
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
+                .withFilter(flags).build();
+        Page<Account> accounts = elasticsearchTemplate.queryForPage(searchQuery, Account.class);
         return new Result<>(accounts);
     }
 

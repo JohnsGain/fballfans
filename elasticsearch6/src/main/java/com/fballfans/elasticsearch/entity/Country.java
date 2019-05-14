@@ -2,9 +2,10 @@ package com.fballfans.elasticsearch.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ public class Country implements Serializable {
     @GeneratedValue
     private Long id;
 
+    @Field(type = FieldType.Text)
     private String name;
 
     public Long getId() {
