@@ -3,12 +3,19 @@ package com.john.auth.controller;
 import com.alibaba.fastjson.JSON;
 import com.john.Result;
 import com.john.auth.domain.entity.SysUser;
+import com.john.auth.service.RedisDistributedLockService;
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.ClusterServersConfig;
+import org.redisson.config.Config;
+import org.redisson.config.ReadMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.web.FilterChainProxy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @date 2019/2/13
@@ -31,6 +39,12 @@ public class TestController {
 
     @Value("${name}")
     private String applicationName;
+
+    @Autowired
+    private RedisDistributedLockService redisDistributedLockService;
+
+    @Value("${spring.redis.cluster.nodes}")
+    private String[] nodes;
 
     @GetMapping("test")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -49,8 +63,34 @@ public class TestController {
         return applicationName + authType +sysUser;
     }
 
+    public static final String KEY = "key";
+
     @GetMapping("hello")
     public String hello() {
+        //Redis集群组态的最低要求是必须有三个主节点
+        Config config = new Config();
+        ClusterServersConfig clusterServers = config.useClusterServers();
+        String[] redisNodes = new String[nodes.length];
+        for (int i = 0; i < nodes.length; i++) {
+            redisNodes[i] = "redis://" + nodes[i];
+        }
+        clusterServers.addNodeAddress(redisNodes).setReadMode(ReadMode.MASTER_SLAVE)
+        .setTimeout(20000);
+
+
+        RedissonClient redissonClient = Redisson.create(config);
+        RLock lock = redissonClient.getLock(KEY);
+        try {
+            if (lock.tryLock(3000L, TimeUnit.MICROSECONDS)) {
+                try {
+                    LOGGER.info("sdg12342423");
+                } finally {
+                    lock.unlock();
+                }
+            }
+        } catch (InterruptedException e) {
+
+        }
         return "hello world";
     }
 
