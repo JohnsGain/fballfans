@@ -69,13 +69,14 @@ public class TestController {
     public String hello() {
         //Redis集群组态的最低要求是必须有三个主节点
         Config config = new Config();
+        config.setLockWatchdogTimeout(50000L);
         ClusterServersConfig clusterServers = config.useClusterServers();
         String[] redisNodes = new String[nodes.length];
         for (int i = 0; i < nodes.length; i++) {
             redisNodes[i] = "redis://" + nodes[i];
         }
         clusterServers.addNodeAddress(redisNodes).setReadMode(ReadMode.MASTER_SLAVE)
-        .setTimeout(20000);
+                .setTimeout(20000);
 
 
         RedissonClient redissonClient = Redisson.create(config);
