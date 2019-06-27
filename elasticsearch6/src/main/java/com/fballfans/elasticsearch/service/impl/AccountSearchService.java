@@ -34,13 +34,21 @@ public class AccountSearchService {
         this.accountRepository = accountRepository;
     }
 
+    /**
+     * 可以匹配所有字段，不指定要匹配的字段，默认匹配所有字段。可以通过field("")方法指定匹配的字段,
+     * @param pageable
+     * @param keyword
+     * @return
+     */
     public Page<Account> keyword(org.springframework.data.domain.Pageable pageable, String keyword) {
 //        QueryStringQueryBuilder address = QueryBuilders.queryStringQuery(keyword)
 //                .field("address")
 //                .analyzeWildcard(true);
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(pageable)
-                .withQuery(QueryBuilders.queryStringQuery(keyword).field("address"))
+//                .withQuery(QueryBuilders.queryStringQuery(keyword).field("address").field("employer"))
+//        不指定要匹配的字段，默认匹配所有字段。
+                .withQuery(QueryBuilders.queryStringQuery(keyword))
                 .build();
         return accountRepository.search(searchQuery);
     }
@@ -83,6 +91,12 @@ public class AccountSearchService {
         return accountRepository.search(searchQuery);
     }
 
+    /**
+     * minimumShouldMatch("3<90%"),主要用在boolquery里面多个should的查询条件的时候，设置需要满足其中几个。
+     * 意思是说如果1<clauses<=3,那么两个条件都要满足（ they are all required），如果clauses>3，那么只要满足90%这个条件
+     * @param address
+     * @return
+     */
     public List<Account> match(String address) {
         MatchQueryBuilder address1 = QueryBuilders.matchQuery("address", address)
                 .autoGenerateSynonymsPhraseQuery(true)
@@ -92,6 +106,7 @@ public class AccountSearchService {
         the integer, the specification applies. In this example: if there are 1 to 3 clauses they are all required, but for 4 or more clauses only 90% are required.*/
 
                 .fuzzyTranspositions(true).minimumShouldMatch("2<90%");
+                //默认Operator就是 or
         return Lists.newArrayList(accountRepository.search(QueryBuilders.matchQuery("address", address)
                 .operator(Operator.OR).minimumShouldMatch("2<90%")));
     }

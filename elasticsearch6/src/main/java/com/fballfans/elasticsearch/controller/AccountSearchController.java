@@ -64,7 +64,9 @@ public class AccountSearchController {
     }
 
     /**
-     * 指定字段来查找,term是完全匹配，不做分词处理,
+     * 指定字段来查找,term是完全匹配，不做分词处理,且传入的参数不经过过滤器，分词器等分析，
+     * 如果address="Mill street",输入参数为Mill,得不到结果，因为在es里面的数据研究分析过变成小写了，
+     * 参数的Mill没有分析，直接在es里面就找不到与之匹配的结果
      * 通过性别和 state来查找
      *
      * @return
@@ -80,7 +82,7 @@ public class AccountSearchController {
     }
 
     /**
-     * 某字段按字符串模糊查询，会做分词处理
+     * 某字段按字符串分词查询，会做分词处理
      *
      * @param address
      * @return
@@ -119,7 +121,7 @@ public class AccountSearchController {
         //查询某经纬度100米范围内
         GeoDistanceQueryBuilder geoPoint1 = QueryBuilders.geoDistanceQuery("geoPoint")
                 .point(latitude, longitude)
-                .distance(10000, DistanceUnit.METERS);
+                .distance(1000, DistanceUnit.METERS);
         GeoDistanceSortBuilder sortBuilder = SortBuilders.geoDistanceSort("geoPoint", latitude, longitude)
                 .unit(DistanceUnit.METERS)
                 .order(SortOrder.ASC);
@@ -168,6 +170,24 @@ public class AccountSearchController {
         return new Result<>(accounts);
     }
 
+    /**
+     * 常用术语查询
+     * 1. 该common术语查询是一个现代的替代提高了精确度和搜索结果的召回（采取禁用词进去），在不牺牲性能的禁用词。
+     * 2. 查询中的每个术语都有成本。搜索"The brown fox" 需要三个术语查询，每个查询一个"the"，"brown"并且 "fox"所有查询都针对索引中的所有文档执行。
+     * 查询"the"可能与许多文档匹配，因此对相关性的影响比其他两个术语小得多。
+     *
+     * 以前，这个问题的解决方案是忽略高频率的术语。通过将其"the"视为停用词，我们减少了索引大小并减少了需要执行的术语查询的数量。
+     * 这种方法的问题在于，虽然停用词对相关性的影响很小，但它们仍然很重要。如果我们删除了停用词，我们就会失去精确度
+     * （例如，我们无法区分"happy" 和"not happy"），并且我们会失去回忆（例如，文本在索引中"The The"或者 "To be or not to be"根本不存在）
+     * 3.现在的解决方案
+     * 该common术语的查询将所述查询术语分为两组：更重要（即低频率而言）和不太重要的（即，高频率而言这将先前已停用词）。
+     * 首先，它搜索与更重要的术语匹配的文档。这些术语出现在较少的文档中，对相关性有较大影响。
+     * 然后，它对不太重要的术语执行第二次查询 - 这些术语经常出现并且对相关性的影响很小。但是，它不是计算所有匹配文档的相关性分数，
+     * 而是仅计算_score已经与第一个查询匹配的文档。通过这种方式，高频项可以改善相关性计算，而无需支付性能不佳的成本。
+     * @see  { 参考文档 https://blog.csdn.net/ctwy291314/article/details/82836514}
+     * @param text
+     * @return
+     */
     @GetMapping("commonterms")
     public Result<List<Account>> commonterms(String text) {
         CommonTermsQueryBuilder address = QueryBuilders.commonTermsQuery("address", text);

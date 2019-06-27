@@ -43,7 +43,8 @@ public interface IAccountRepository extends ElasticsearchRepository<Account, Lon
     Page<Account> findByBalanceLessThanEqual(Double bound, Pageable pageable);
 
     /**
-     * 左右模糊匹配 address like *xxx*
+     * 右模糊匹配 address like xxx*,针对分词过后的每个term，如 tom like jane,
+     * 搜索参数是tom,lik,jan之一都可以搜索出结果，但是如果参数是om,ike,ane就搜索不出来
      *
      * @param bound
      * @param pageable
@@ -53,8 +54,24 @@ public interface IAccountRepository extends ElasticsearchRepository<Account, Lon
 
     Page<Account> findByAddressStartingWith(String start, Pageable pageable);
 
+    /**
+     * 需要按分词的结果进行In查询，不是字符串匹配。
+     * 例如address = "blue lane street",
+     * 使用 lane能搜索出这个结果，使用lan搜索不出来，因为分词结果里面没有lan这个词。上面address
+     * 分词之后的词是lane
+     * @param address
+     * @param pageable
+     * @return
+     */
     Page<Account> findByAddressIn(Collection<String> address, Pageable pageable);
 
+    /**
+     * 可以进行字符串匹配
+     *  例如address = "blue lane street",参数是ane,lan,lane都可以得到结果
+     * @param address
+     * @param pageable
+     * @return
+     */
     Page<Account> findByAddressContaining(String address, Pageable pageable);
 
     List<Account> findByGeoPoint(GeoPoint point);

@@ -3,7 +3,6 @@ package com.fballfans.elasticsearch.service.impl;
 import com.fballfans.elasticsearch.entity.Account;
 import com.fballfans.elasticsearch.repository.IAccountRepository;
 import com.fballfans.elasticsearch.service.IAccountService;
-import com.google.common.collect.Lists;
 import com.john.Pageable;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +23,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author zhangjuwa
@@ -52,13 +53,15 @@ public class AccountServiceImpl implements IAccountService {
         NativeSearchQueryBuilder searchQuery = new NativeSearchQueryBuilder()
                 .withPageable(PageRequest.of(pageable.getPage(), pageable.getSize()));
 //                .withQuery(QueryBuilders.matchAllQuery());
-//        QueryBuilders.termQuery()
-//                .withFilter(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("firstname", )))
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 //        QueryStringQueryBuilder.
         if (StringUtils.isNotBlank(state)) {
             TermQueryBuilder state1 = QueryBuilders.termQuery("state", state);
             boolQueryBuilder.must(state1);
+        }
+        if (StringUtils.isNotBlank(firstname)) {
+            TermQueryBuilder firstname1 = QueryBuilders.termQuery("firstname", firstname);
+            boolQueryBuilder.must(firstname1);
         }
         searchQuery.withFilter(boolQueryBuilder);
         return accountRepository.search(searchQuery.build());
@@ -114,7 +117,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     public Page<Account> in(Pageable pageable, String address) {
-        ArrayList<String> strings = Lists.newArrayList(address.split(","));
+        List<String> strings = Stream.of(address.split(",")).collect(Collectors.toList());
         Sort sort = new Sort(Sort.Direction.DESC, "balance");
         return accountRepository.findByAddressIn(strings, PageRequest.of(pageable.getPage(), pageable.getSize(), sort));
     }
@@ -146,7 +149,6 @@ public class AccountServiceImpl implements IAccountService {
                     .build();
             list.add(build);
         }
-//        accountRepository.saveAll(all);
         elasticsearchTemplate.bulkIndex(list);
         elasticsearchTemplate.refresh(Account.class);
     }
