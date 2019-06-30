@@ -175,7 +175,7 @@ public class AccountSearchController {
      * 1. 该common术语查询是一个现代的替代提高了精确度和搜索结果的召回（采取禁用词进去），在不牺牲性能的禁用词。
      * 2. 查询中的每个术语都有成本。搜索"The brown fox" 需要三个术语查询，每个查询一个"the"，"brown"并且 "fox"所有查询都针对索引中的所有文档执行。
      * 查询"the"可能与许多文档匹配，因此对相关性的影响比其他两个术语小得多。
-     *
+     * <p>
      * 以前，这个问题的解决方案是忽略高频率的术语。通过将其"the"视为停用词，我们减少了索引大小并减少了需要执行的术语查询的数量。
      * 这种方法的问题在于，虽然停用词对相关性的影响很小，但它们仍然很重要。如果我们删除了停用词，我们就会失去精确度
      * （例如，我们无法区分"happy" 和"not happy"），并且我们会失去回忆（例如，文本在索引中"The The"或者 "To be or not to be"根本不存在）
@@ -184,9 +184,10 @@ public class AccountSearchController {
      * 首先，它搜索与更重要的术语匹配的文档。这些术语出现在较少的文档中，对相关性有较大影响。
      * 然后，它对不太重要的术语执行第二次查询 - 这些术语经常出现并且对相关性的影响很小。但是，它不是计算所有匹配文档的相关性分数，
      * 而是仅计算_score已经与第一个查询匹配的文档。通过这种方式，高频项可以改善相关性计算，而无需支付性能不佳的成本。
-     * @see  { 参考文档 https://blog.csdn.net/ctwy291314/article/details/82836514}
+     *
      * @param text
      * @return
+     * @see { 参考文档 https://blog.csdn.net/ctwy291314/article/details/82836514}
      */
     @GetMapping("commonterms")
     public Result<List<Account>> commonterms(String text) {
@@ -290,6 +291,12 @@ public class AccountSearchController {
         return null;
     }
 
+    /**
+     * 查询Id集合对应的文档
+     *
+     * @param ids
+     * @return
+     */
     @GetMapping("idsquery")
     public Result<List<Account>> idsquery(@RequestParam List<String> ids) {
         String[] arr = new String[ids.size()];
@@ -306,23 +313,26 @@ public class AccountSearchController {
     /**
      * 如果指定的字段是string类型，模糊查询是基于编辑距离算法来匹配文档。编辑距离的计算基于我们提供的查询词条和被搜索文档。如果指定的字段是数值类型或者日期类型，
      * 模糊查询基于在字段值上进行加减操作来匹配文档（The fuzzy query uses similarity based on Levenshtein edit distance for  fields, and a
-     * margin on numeric and date fields）。此查询很占用CPU资源，但当需要模糊匹配时它很有用，例如，当用户拼写错误时。
+     * margin on numeric and date fields）。
      *
+     * @param text
+     * @return
+     * @apiNote 此查询很占用CPU资源，但当需要模糊匹配时它很有用，例如，当用户拼写错误时。
+     * <p>
      * fuzzyQuery 基于编辑距离 (Levenshtein) 来进行相似搜索, 比如搜索 kimzhy, 可以搜索出 kinzhy(编辑距离为 1)
      * 为了进行测试说明, 前创建一个索引, 插入几条数据 ka,kab,kib,ba, 我们的搜索源为 ki
      * 了解更多关于编辑距离 (Levenshtein) 的概念, 请参考:<a href='http://www.cnblogs.com/biyeymyhjob/archive/2012/09/28/2707343.html'></a>
      * 了解更多编辑距离的算法, 请参考:<a href='http://blog.csdn.net/ironrabbit/article/details/18736185'></a>
-     *  ki — ka 编辑距离为 1
-     *  ki — kab 编辑距离为 2
-     *  ki — kbia 编辑距离为 3
-     *  ki — kib 编辑距离为 1
-     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 0 的时候, 没有结果
-     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 1 的时候, 会出现结果 ka,kib
-     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 2 的时候, 会出现结果 ka,kib,kab
-     *  所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 3 的时候, 会出现结果 ka,kib,kab,kbaa(很遗憾,ES 本身最多只支持到 2, 因此不会出现此结果)
-     *
-     * @param text
-     * @return
+     * ki — ka 编辑距离为 1
+     * ki — kab 编辑距离为 2
+     * ki — kbia 编辑距离为 3
+     * ki — kib 编辑距离为 1
+     * 所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 0 的时候, 没有结果
+     * 所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 1 的时候, 会出现结果 ka,kib
+     * 所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 2 的时候, 会出现结果 ka,kib,kab
+     * 所以当我们设置编辑距离 (ES 中使用 fuzziness 参数来控制) 为 3 的时候, 会出现结果 ka,kib,kab,kbaa(很遗憾,ES 本身最多只支持到 2, 因此不会出现此结果)
+     * @apiNote prefixLength 最小前缀不参与模糊匹配的字符长度,例如设置为1，当传入参数road的时候，第一个字符就不会参与
+     * 模糊匹配，需要一定匹配，从后面开始进行模虎匹配
      */
     @ApiOperation("模糊查询")
     @GetMapping("fuzzy")
@@ -330,7 +340,7 @@ public class AccountSearchController {
         FuzzyQueryBuilder address = QueryBuilders.fuzzyQuery(field, text)
                 //模糊匹配的最大编辑距离(指两个字串之间，由一个转成另一个所需的最少编辑操作次数)
                 .fuzziness(Fuzziness.ONE)
-                //最小前缀配置长度，不传参数就是0
+                //最小前缀不参与模糊匹配的字符长度，不传参数就是0
                 .prefixLength(prefix)
 //        控制最大的返回结果
 //                .maxExpansions(100)
@@ -341,6 +351,14 @@ public class AccountSearchController {
         return new Result<>(accounts);
     }
 
+    /**
+     * 对查询的文档要满足特定的前缀字符串，对输入参数不进行analyzer，意味着对参数不分词，不小写等等
+     *
+     * @param field
+     * @param prefix
+     * @param pageable
+     * @return
+     */
     @ApiOperation("前缀查询")
     @GetMapping("prefixquery")
     public Result<Page<Account>> prefixquery(String field, String prefix, @PageableDefault(sort = {"balance"}) Pageable pageable) {
@@ -361,7 +379,9 @@ public class AccountSearchController {
         SearchQuery searchQuery = new NativeSearchQueryBuilder().withPageable(pageable)
                 .withFilter(flags).build();
         Page<Account> accounts = elasticsearchTemplate.queryForPage(searchQuery, Account.class);
+
         return new Result<>(accounts);
     }
+
 
 }
