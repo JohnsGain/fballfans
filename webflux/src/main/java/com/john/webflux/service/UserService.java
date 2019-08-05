@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 public class UserService {
-    private static final Map<Integer, User> data = new ConcurrentHashMap<>();
+    private static final Map<Integer, User> DATA = new ConcurrentHashMap<>();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
@@ -30,33 +31,36 @@ public class UserService {
         User user2 = new User();
         user2.setId(2);
         user2.setName("SDG222");
-        data.put(1, user);
-        data.put(2, user2);
+        DATA.put(1, user);
+        DATA.put(2, user2);
     }
 
     public Flux<User> list() {
-        return Flux.fromIterable(this.data.values());
+        return Flux.fromIterable(DATA.values());
     }
 
     public Flux<User> getById(final Flux<Integer> ids) {
         ids.doOnEach(item -> {
             LOGGER.info("id={}", item);
         });
-        return ids.flatMap(id -> Mono.justOrEmpty(this.data.get(id)));
+        //如果流在超时时限没有发出（emit）任何值，则发出错误（error）信号,发生错误的时候就返回 1
+        return ids.timeout(Duration.ofSeconds(1)).onErrorResume(item -> Flux.just(1))
+                .flatMap(item -> Mono.justOrEmpty(DATA.get(item)));
+        //return ids.flatMap(id -> Mono.justOrEmpty(DATA.get(id)));
     }
 
     public Mono<User> getById(final Integer id) {
-        LOGGER.info("getbyteiD={}",id);
-        return Mono.justOrEmpty(this.data.get(id))
+        LOGGER.info("getbyteiD={}", id);
+        return Mono.justOrEmpty(DATA.get(id))
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException()));
     }
 
     public Mono<User> createOrUpdate(final User user) {
-        this.data.put(user.getId(), user);
+        DATA.put(user.getId(), user);
         return Mono.just(user);
     }
 
     public Mono<User> delete(final Integer id) {
-        return Mono.justOrEmpty(this.data.remove(id));
+        return Mono.justOrEmpty(DATA.remove(id));
     }
 }
