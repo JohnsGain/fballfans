@@ -33,8 +33,8 @@ public class HelloWorldController {
     }
 
 
-    @GetMapping("{id}")
-    public Mono<User> test2(@PathVariable Integer id) {
+    @GetMapping("id")
+    public Mono<User> test2(@RequestParam Integer id) {
         LOGGER.info("进入test2...");
         return userService.getById(id);
     }
@@ -48,12 +48,21 @@ public class HelloWorldController {
         return userService.createOrUpdate(user);
     }
 
+
+    /**
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping
     public Mono<User> delete(Integer id) {
         LOGGER.info("进入 delete...");
         return userService.delete(id);
     }
 
+    /**
+     * @return
+     */
     @GetMapping("list")
     public Flux<User> list() {
         LOGGER.info("进入 list...");
