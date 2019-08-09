@@ -1,6 +1,5 @@
 package com.john.webflux.monoflux;
 
-import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -86,5 +85,21 @@ public class FluxDemo {
         });
         log.info("=={}", generate.count().block());
         generate.subscribe(item -> log.info("消费数据={}", item));
+    }
+
+    /**
+     * create()方法与 generate()方法的不同之处在于所使用的是 FluxSink 对象。FluxSink 支持同步和异步的消息产生，
+     * 并且可以在一次调用中产生多个元素。在代码清单 3 中，在一次调用中就产生了全部的 10 个元素。
+     */
+    @Test
+    public void create() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        Flux<Object> flux = Flux.create(item -> {
+            for (int i = 0; i < 5; i++) {
+                item.next(random.nextDouble(5));
+            }
+        });
+
+        flux.subscribe(item -> log.info("订阅数据={}", item));
     }
 }
