@@ -2,7 +2,13 @@ package com.john.webflux.monoflux;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.reactivestreams.Subscriber;
 import reactor.core.publisher.Mono;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * {@link reactor.core.publisher.Mono}API的使用
@@ -27,12 +33,47 @@ public class MonoDemo {
      * 只有 Optional 对象中包含值或对象不为 null 时，Mono 序列才产生对应的元素。
      */
     @Test
-    public void constructure() {
+    public void constructure() throws ExecutionException, InterruptedException {
         Mono<String> just = Mono.just("1");
         Mono<Object> empty = Mono.empty();
         Mono<Object> error = Mono.error(Throwable::new);
         Mono<Object> never = Mono.never();
         Mono<String> callable = Mono.fromCallable(() -> "bb");
+        Mono<Integer> integerMono = Mono.fromSupplier(() -> 5);
+//        创建一个 Mono 序列，忽略作为源的 Publisher 中的所有元素，只产生结束消息。
+        //            item.onSubscribe();
+        Mono<Object> ignoreElements = Mono.ignoreElements(Subscriber::onComplete);
+        log.info("声明异步任务");
+        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
+            try {
+                log.info("异步线程执行");
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log.info("睡眠");
+            return "sggg";
+        });
+        log.info("声明异步结束");
+        Mono<String> stringMono = Mono.fromFuture(completableFuture);
+        log.info("继续执行");
+        completableFuture.thenAcceptAsync(item -> stringMono.subscribe((data) -> log.info("获取元素={}", data)));
+        completableFuture.thenAcceptAsync(item -> stringMono.subscribe((data) -> log.info("获取元素={}", data)));
+        stringMono.subscribe( (item) -> log.info("获取元素111={}", item));
+//        String s = completableFuture.get();
+        stringMono.subscribe( (item) -> log.info("获取元素222={}", item));
+        stringMono.subscribe( (item) -> log.info("获取元素333={}", item));
+
 //        Mono.fromCompletionStage()
+        TimeUnit.SECONDS.sleep(1000);
+    }
+
+    @Test
+    public void create() {
+        Mono<String> objectMono = Mono.create((item) -> {
+            log.info("hello world!");
+            item.success("hello world!");
+        });
+        objectMono.subscribe(item -> log.info(item+" jio"));
     }
 }

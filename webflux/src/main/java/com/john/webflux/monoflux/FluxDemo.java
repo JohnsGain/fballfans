@@ -8,8 +8,10 @@ import reactor.core.publisher.Flux;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhangjuwa
@@ -101,5 +103,58 @@ public class FluxDemo {
         });
 
         flux.subscribe(item -> log.info("订阅数据={}", item));
+    }
+
+    /**
+     * buffer bufferTimeOut
+     * 这两个操作符的作用是把当前流中的元素收集到集合中，并把集合对象作为流中的新元素。在进行收集时可以指定不同的条件：
+     * 所包含的元素的最大数量或收集的时间间隔。方法 buffer()仅使用一个条件，而 bufferTimeout()可以同时指定两个条件。
+     * 指定时间间隔时可以使用 Duration 对象或毫秒数，即使用 bufferMillis()或 bufferTimeoutMillis()两个方法。
+     * 除了元素数量和时间间隔之外，还可以通过 bufferUntil 和 bufferWhile 操作符来进行收集。这两个操作符的参数是表示
+     * 每个集合中的元素所要满足的条件的 Predicate 对象。bufferUntil 会一直收集直到 Predicate 返回为 true。使得
+     * Predicate 返回 true 的那个元素可以选择添加到当前集合或下一个集合中；bufferWhile 则只有当 Predicate 返回 true
+     * 时才会收集。一旦值为 false，会立即开始下一次收集。
+     */
+    @Test
+    public void buffer() throws InterruptedException {
+//        第一行语句输出的是 5 个包含 20 个元素的数组
+        Flux<List<Integer>> buffer = Flux.range(0, 100).buffer(20);
+        buffer.subscribe(item -> log.info("获取元素={}", item));
+        TimeUnit.SECONDS.sleep(1000);
+//        第二行语句输出的是 2 个包含了 10 个元素的数组
+        Flux<List<Long>> listFlux = Flux.interval(Duration.ofMillis(10))
+                .buffer(Duration.ofMillis(101))
+                .take(2).limitRequest(2);
+        listFlux.subscribe(item -> log.info("通过时间间隔获取={}", item));
+//        第三行语句输出的是 5 个包含 2 个元素的数组。每当遇到一个偶数就会结束当前的收集
+
+        TimeUnit.SECONDS.sleep(1000);
+    }
+
+    /**
+     * bufferUntil 会一直收集直到 Predicate 返回为 true,然后又开始下一轮收集
+     */
+    @Test
+    public void bufferUntil() {
+//        第三行语句输出的是 5 个包含 2 个元素的数组。每当遇到一个偶数就会结束当前的收集；
+        Flux<List<Integer>> listFlux = Flux.range(0, 10).bufferUntil(item -> item % 2 == 0);
+        listFlux.subscribe(item -> log.info("bufferUntil={}", item));
+    }
+
+    /**
+     * bufferWhile 则只有当 Predicate 返回 true 时才会收集。一旦值为 false，会立即开始下一次收集
+     */
+    @Test
+    public void bufferWhile() {
+        Flux<List<Integer>> listFlux = Flux.range(0, 10).bufferWhile(item -> item % 2 == 0);
+        listFlux.subscribe(item -> log.info("bufferWhile={}", item));
+    }
+
+    /**
+     * 对流中包含的元素进行过滤，只留下满足 Predicate 指定条件的元素。代码清单 6 中的语句输出的是 1 到 10 中的所有偶数。
+     */
+    @Test
+    public void filter() {
+
     }
 }
