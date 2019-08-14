@@ -6,6 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -58,7 +59,7 @@ public class FluxDemo2 {
 
         //takeWhile(Predicate<? super T> continuePredicate)： 当 Predicate 返回 true 时才进行提取。
         //注意，这里takeWhile当predicate为true的时候，是从已经产生的序列元素里面提取
-        Flux<Integer> longFlux = Flux.range(0, 25).takeWhile(item -> item <15);
+        Flux<Integer> longFlux = Flux.range(0, 25).takeWhile(item -> item < 15);
         longFlux.subscribe(item -> log.info("takeWhile={}", item));
 
         //takeUntilOther(Publisher<?> other)：提取元素直到另外一个流开始产生元素。
@@ -96,11 +97,11 @@ public class FluxDemo2 {
 
         //merge会按照所有流中元素的实际产生顺序来合并
         Flux<? extends Number> merge = Flux.merge(take, range);
-        merge.subscribe(item-> log.info("合并结果序列的元素={}", item));
+        merge.subscribe(item -> log.info("合并结果序列的元素={}", item));
 
         //mergeSequential 则按照所有流被订阅的顺序，以流为单位进行合并,所以这里他会先合并所有第一个流的元素
         Flux<? extends Number> flux = Flux.mergeSequential(take, range);
-        flux.subscribe(item-> log.info("mergeSequential合并结果序列的元素={}", item));
+        flux.subscribe(item -> log.info("mergeSequential合并结果序列的元素={}", item));
 
 
         TimeUnit.SECONDS.sleep(1000);
@@ -112,23 +113,62 @@ public class FluxDemo2 {
      */
     @Test
     public void flatMap() {
+        log.info("并行线程={}", Runtime.getRuntime().availableProcessors());
+//        Flux<Integer> integerFlux = Flux.just(, 4).flatMap(item -> Flux.range(0, item));
+        //这里我是根据对java Stream API里面的flatmap使用场景来理解 flux的flatmap
+        Integer[] integers = {1, 2};
+        Integer[] integers2 = {4, 5, 6};
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        Flux<Integer[]> generate = Flux.generate(LinkedList::new, (list, sink) -> {
+            if (list.size() > 10) {
+                sink.complete();
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Integer[] ar = new Integer[2];
+            ar[0] = random.nextInt(5);
+            ar[1] = random.nextInt(15);
+            list.add(ar);
+            sink.next(ar);
+            return list;
+        });
+
+        //可以设置并行度
+        Flux<Integer> integerFlux2 = Flux.just(integers2, integers2).flatMap(Flux::fromArray, 2);
+        integerFlux2.subscribe(item -> log.info("flatmap={}", item));
+//        integerFlux.flatMapSequential()
+    }
+
+    /**
+     * concatMap 操作符的作用也是把流中的每个元素转换成一个流，再把所有流进行合并。与 flatMap 不同的是，
+     * concatMap 会根据原始流中的元素顺序依次把转换之后的流进行合并；与 flatMapSequential 不同的是，
+     * concatMap 对转换之后的流的订阅是动态进行的，而 flatMapSequential 在合并之前就已经订阅了所有的流。
+     */
+    @Test
+    public void concatMap() throws InterruptedException {
+        Flux<Long> longFlux = Flux.range(2, 5)
+                .concatMap(item -> Flux.interval(Duration.ofMillis(item * 10)).take(item));
+        longFlux.subscribe(item -> log.info("concatMap={}", item));
+
+        TimeUnit.SECONDS.sleep(100);
 
     }
 
+    /**
+     * combineLatest 操作符把所有流中的最新产生的元素合并成一个新的元素，作为返回结果流中的元素。
+     * 只要其中任何一个流中产生了新的元素，合并操作就会被执行一次，结果流中就会产生新的元素。
+     */
+    @Test
+    public void combineLatest() throws InterruptedException {
+        Flux<String> stringFlux = Flux.combineLatest(item -> Arrays.toString(item),
+                Flux.interval(Duration.ofMillis(100)).take(5),
+                Flux.interval(Duration.ofMillis(50), Duration.ofMillis(100)).take(6));
+        stringFlux.subscribe(item->log.info("combinelatest={}", item));
 
+        TimeUnit.SECONDS.sleep(100);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 }
