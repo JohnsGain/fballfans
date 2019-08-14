@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.util.function.Tuple2;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -124,7 +125,7 @@ public class FluxDemo {
 //        第二行语句输出的是 2 个包含了 10 个元素的数组
         Flux<List<Long>> listFlux = Flux.interval(Duration.ofMillis(10))
                 .buffer(Duration.ofMillis(101))
-                .take(2).limitRequest(2);
+                .take(2);
         listFlux.subscribe(item -> log.info("通过时间间隔获取={}", item));
 //        第三行语句输出的是 5 个包含 2 个元素的数组。每当遇到一个偶数就会结束当前的收集
 
@@ -155,6 +156,34 @@ public class FluxDemo {
      */
     @Test
     public void filter() {
+        Flux<Integer> filter = Flux.range(0, 10).filter(item -> item % 2 == 0);
+        filter.subscribe(item -> log.info("过滤之后的序列元素={}", item));
+    }
 
+    /**
+     * window 操作符的作用类似于 buffer，所不同的是 window 操作符是把当前流中的元素收集到另外的 Flux 序列中，因此返回值类型是 Flux<Flux<T>>。
+     * 在代码清单 7 中，两行语句的输出结果分别是 5 个和 2 个 UnicastProcessor 字符。
+     */
+    @Test
+    public void window() {
+        Flux<Flux<Integer>> window = Flux.range(0, 100).window(20);
+//        window.subscribe(item -> item.subscribe(data -> log.info("window序列={}", data)));
+        window.subscribe(item -> log.info("flux序列={}", item));
+    }
+
+    /**
+     * zipWith 操作符把当前流中的元素与另外一个流中的元素按照一对一的方式进行合并。在合并时可以不做任何处理，由此得到的是
+     * 一个元素类型为 Tuple2 的流；也可以通过一个 BiFunction 函数对合并的元素进行处理，所得到的流的元素类型为该函数的返回值。
+     */
+    @Test
+    public void zipWith() {
+//        两个流中包含的元素分别是 a，b 和 c，d。第一个 zipWith 操作符没有使用合并函数，因此结果流中的元素类型为
+//        Tuple2；第二个 zipWith 操作通过合并函数把元素类型变为 String。
+        Flux<Tuple2<String, String>> tuple2Flux = Flux.just("a", "b").zipWith(Flux.just("1", "2"));
+        tuple2Flux.subscribe(item -> log.info("zipwith={}", item));
+
+        //使用合并函数
+        Flux<String> stringFlux = Flux.just("a", "b").zipWith(Flux.just("1", "2"), (a, b) -> a.concat("==").concat(b));
+        stringFlux.subscribe(item-> log.info("使用合并函数后的序列={}", item));
     }
 }

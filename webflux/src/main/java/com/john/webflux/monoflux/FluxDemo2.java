@@ -3,6 +3,7 @@ package com.john.webflux.monoflux;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.LinkedList;
@@ -64,6 +65,70 @@ public class FluxDemo2 {
         TimeUnit.SECONDS.sleep(1000);
 
     }
+
+    /**
+     * reduce 和 reduceWith 操作符对流中包含的所有元素进行累积操作，得到一个包含计算结果的 Mono 序列。
+     * 累积操作是通过一个 BiFunction 来表示的。在操作时可以指定一个初始值。如果没有初始值，则序列的第一个元素作为初始值。
+     */
+    @Test
+    public void reduce() {
+        Mono<Integer> reduce = Flux.range(0, 10).reduce(Integer::sum);
+        reduce.subscribe(item -> log.info("累加结果={}", item));
+
+        //带初始值
+        Mono<Integer> reduce1 = Flux.range(0, 10).reduce(10, Integer::sum);
+        reduce1.subscribe(item -> log.info("带初始值累加结果={}", item));
+
+        //初始值来自于一返回值个函数
+        Mono<Integer> integerMono = Flux.range(0, 10).reduceWith(() -> 5, Integer::sum);
+        integerMono.subscribe(item -> log.info("初始值来自于一返回值个函数={}", item));
+
+    }
+
+    /**
+     * merge 和 mergeSequential 操作符用来把多个流合并成一个 Flux 序列。不同之处在于 merge 按照所有流中元素的实际产生
+     * 顺序来合并，而 mergeSequential 则按照所有流被订阅的顺序，以流为单位进行合并
+     */
+    @Test
+    public void merge() throws InterruptedException {
+        Flux<Long> take = Flux.interval(Duration.ofMillis(100)).take(5);
+        Flux<Integer> range = Flux.range(1000, 100);
+
+        //merge会按照所有流中元素的实际产生顺序来合并
+        Flux<? extends Number> merge = Flux.merge(take, range);
+        merge.subscribe(item-> log.info("合并结果序列的元素={}", item));
+
+        //mergeSequential 则按照所有流被订阅的顺序，以流为单位进行合并,所以这里他会先合并所有第一个流的元素
+        Flux<? extends Number> flux = Flux.mergeSequential(take, range);
+        flux.subscribe(item-> log.info("mergeSequential合并结果序列的元素={}", item));
+
+
+        TimeUnit.SECONDS.sleep(1000);
+    }
+
+    /**
+     * flatMap 和 flatMapSequential 操作符把流中的每个元素转换成一个流，再把所有流中的元素进行合并。
+     * flatMapSequential 和 flatMap 之间的区别与 mergeSequential 和 merge 之间的区别是一样的。
+     */
+    @Test
+    public void flatMap() {
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
