@@ -127,7 +127,6 @@ public class FluxDemo {
                 .buffer(Duration.ofMillis(101))
                 .take(2);
         listFlux.subscribe(item -> log.info("通过时间间隔获取={}", item));
-//        第三行语句输出的是 5 个包含 2 个元素的数组。每当遇到一个偶数就会结束当前的收集
 
         TimeUnit.SECONDS.sleep(1000);
     }
