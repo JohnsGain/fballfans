@@ -25,8 +25,12 @@ import java.io.IOException;
 @Component
 public class ImageCodeProcessorImpl implements IValidateCodeProcessor {
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    public ImageCodeProcessorImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public void create(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletRequestBindingException {

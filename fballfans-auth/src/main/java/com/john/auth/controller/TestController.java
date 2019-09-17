@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.john.Result;
 import com.john.auth.domain.entity.SysUser;
 import com.john.auth.service.RedisDistributedLockService;
+import com.john.auth.service.impl.TaskSchedulerService;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -27,8 +28,8 @@ import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * @author ""
  * @date 2019/2/13
- * @author  ""
  * @since jdk1.8
  **/
 @RestController
@@ -40,11 +41,18 @@ public class TestController {
     @Value("${name}")
     private String applicationName;
 
-    @Autowired
-    private RedisDistributedLockService redisDistributedLockService;
+    private final RedisDistributedLockService redisDistributedLockService;
+
+    private final TaskSchedulerService taskSchedulerService;
 
     @Value("${spring.redis.cluster.nodes}")
     private String[] nodes;
+
+    @Autowired
+    public TestController(RedisDistributedLockService redisDistributedLockService, TaskSchedulerService taskSchedulerService) {
+        this.redisDistributedLockService = redisDistributedLockService;
+        this.taskSchedulerService = taskSchedulerService;
+    }
 
     @GetMapping("test")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -60,7 +68,7 @@ public class TestController {
         LOGGER.info("body= {}", builder);
         SysUser sysUser = JSON.parseObject(builder.toString(), SysUser.class);
         //return "hhhhhh";
-        return applicationName + authType +sysUser;
+        return applicationName + authType + sysUser;
     }
 
     public static final String KEY = "key";
@@ -98,5 +106,16 @@ public class TestController {
     @GetMapping("user/{id}")
     public Result<String> user(@PathVariable("id") String id) {
         return Result.<String>build().withData("");
+    }
+
+
+    /**
+     * 测试手动发起定时任务
+     *
+     * @throws NoSuchMethodException
+     */
+    @GetMapping("cron")
+    public void cron() throws NoSuchMethodException {
+        taskSchedulerService.taskScheduler();
     }
 }

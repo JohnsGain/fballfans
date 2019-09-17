@@ -26,8 +26,12 @@ public class SseEmitterController {
     private Set<SseEmitter> sseEmitters = new HashSet<SseEmitter>();
     private int messageCount = 0;
 
+    private final TestSseEmitterService testSseEmitterService;
+
     @Autowired
-    private TestSseEmitterService testSseEmitterService;
+    public SseEmitterController(TestSseEmitterService testSseEmitterService) {
+        this.testSseEmitterService = testSseEmitterService;
+    }
 
     @GetMapping("emmit")
     public ResponseEntity<SseEmitter> emmit() throws InterruptedException {
