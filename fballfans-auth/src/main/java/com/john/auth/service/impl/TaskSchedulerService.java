@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.TimeZone;
 
 /**
+ * 测试手动发起定时任务
  * @author zhangjuwa
  * @date 2019/9/17
  * @since jdk1.8

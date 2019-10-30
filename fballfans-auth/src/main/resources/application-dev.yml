@@ -1,7 +1,7 @@
 spring:
   redis:
     host: 211.159.185.172
-    password: yu718580
+    password: warehouse
   application:
     name: threefei-auth
   datasource:

@@ -9,5 +9,14 @@ spring:
   mvc:
     async:
       request-timeout: PT0S
+
+  rabbitmq:
+    username: johnawll
+    password: 123456
+    virtual-host: johnawll
+#      spring.rabbitmq.host=127.0.0.1
+#      spring.rabbitmq.virtual-host=johnawll
+#      spring.rabbitmq.username=johnawll
+#      spring.rabbitmq.password=123456
 auth:
   permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit,/cron
