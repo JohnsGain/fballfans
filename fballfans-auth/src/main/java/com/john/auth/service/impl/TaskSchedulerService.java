@@ -32,6 +32,7 @@ public class TaskSchedulerService {
         Method print = this.getClass().getMethod("print");
         Runnable runnable = new ScheduledMethodRunnable(this, print);
         CronTask cronTask = new CronTask(runnable, new CronTrigger("0/1 * * * * ?", TimeZone.getTimeZone("GMT+8")));
+        long d = 1000_000_234;
         taskScheduler.schedule(runnable, cronTask.getTrigger());
     }
 
