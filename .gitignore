@@ -3,3 +3,12 @@
 /log/
 /*/*.iml
 /.idea/
+elasticsearch6/target/
+fballfans-admin/target/
+fballfans-auth/src/main/java/test/
+fballfans-auth/target/
+fballfans-core/target/
+fballfans-eureka/target/
+logs/
+webflux/src/test/
+webflux/target/
