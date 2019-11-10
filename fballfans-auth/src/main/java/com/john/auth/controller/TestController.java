@@ -1,10 +1,12 @@
 package com.john.auth.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.john.JsonData;
 import com.john.Result;
 import com.john.auth.domain.entity.SysUser;
 import com.john.auth.service.RedisDistributedLockService;
 import com.john.auth.service.impl.TaskSchedulerService;
+import org.aspectj.apache.bcel.generic.RET;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -20,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import test.UserTest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -118,4 +121,21 @@ public class TestController {
     public void cron() throws NoSuchMethodException {
         taskSchedulerService.taskScheduler();
     }
+
+    /**
+     * @return 演示JsonRowValue注解  和  JsonValue注解的使用
+     */
+    @GetMapping("jack")
+    public Result jackson() {
+        UserTest userTest = new UserTest();
+        userTest.setAge(2);
+        userTest.setName("{\"country\":\"China\", \"city\":\"Dalian\"}");
+
+
+        String data = "{\"country\":\"China\", \"city\":\"Dalian\"}";
+//如果预期的值是一个Json格式的字符串，就不需要再用jackson做序列化了，用一个注解JsonRawValue保证不对这个字符串重复序列化。
+        JsonData of = JsonData.of(data);
+        return Result.of(of);
+//        return Result.build().withData(userTest);
+  }
 }

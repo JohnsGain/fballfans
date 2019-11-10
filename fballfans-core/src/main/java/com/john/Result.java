@@ -3,6 +3,8 @@ package com.john;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.net.PortUnreachableException;
+
 /**
  *
  * @author Hero
@@ -21,6 +23,15 @@ public class Result<T> {
     public static <T> Result<T> build() {
         return new Result<T>();
     }
+
+
+    public static Result of(Object object) {
+        return new Result(object);
+    }
+
+//    public static Result of(JsonData data) {
+//
+//    }
 
     private Result() {
     }
