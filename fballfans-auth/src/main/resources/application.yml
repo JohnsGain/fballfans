@@ -1,9 +1,9 @@
 spring:
   profiles:
 #公司配置
-    active: com
+#    active: com
 #    家用配置
-#    active: dev
+    active: dev
   main:
     allow-bean-definition-overriding: true
   mvc:
@@ -20,3 +20,13 @@ spring:
 #      spring.rabbitmq.password=123456
 auth:
   permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit,/cron
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
