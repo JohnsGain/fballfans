@@ -3,6 +3,7 @@ package com.john;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.validation.constraints.NotNull;
 import java.net.PortUnreachableException;
 
 /**
@@ -18,6 +19,7 @@ public class Result<T> {
     @ApiModelProperty("返回消息")
     private String message = "OK";
     @ApiModelProperty("数据")
+    @NotNull(message = "data不能为空")
     private T data;
 
     public static <T> Result<T> build() {
