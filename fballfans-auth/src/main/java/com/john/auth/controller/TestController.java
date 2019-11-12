@@ -6,7 +6,6 @@ import com.john.Result;
 import com.john.auth.domain.entity.SysUser;
 import com.john.auth.service.RedisDistributedLockService;
 import com.john.auth.service.impl.TaskSchedulerService;
-import org.aspectj.apache.bcel.generic.RET;
 import org.redisson.Redisson;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -48,7 +47,7 @@ public class TestController {
 
     private final TaskSchedulerService taskSchedulerService;
 
-    @Value("${spring.redis.cluster.nodes}")
+//    @Value("${spring.redis.cluster.nodes}")
     private String[] nodes;
 
     @Autowired
@@ -130,12 +129,17 @@ public class TestController {
         UserTest userTest = new UserTest();
         userTest.setAge(2);
         userTest.setName("{\"country\":\"China\", \"city\":\"Dalian\"}");
-
+        userTest.setName("[{\"type\":\"wx\",\"amount\":3.20},{\"type\":\"leader\",\"amount\":1.80}]");
 
         String data = "{\"country\":\"China\", \"city\":\"Dalian\"}";
 //如果预期的值是一个Json格式的字符串，就不需要再用jackson做序列化了，用一个注解JsonRawValue保证不对这个字符串重复序列化。
         JsonData of = JsonData.of(data);
-        return Result.of(of);
-//        return Result.build().withData(userTest);
-  }
+//        return Result.of(of);
+        return Result.build().withData(userTest);
+    }
+
+
+
 }
+
+

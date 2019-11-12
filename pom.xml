@@ -15,6 +15,7 @@
         <module>fballfans-eureka</module>
         <module>elasticsearch6</module>
         <module>webflux</module>
+        <module>fballfans-server</module>
     </modules>
     <!--<parent>-->
     <!--<groupId>org.springframework.boot</groupId>-->
