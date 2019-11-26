@@ -16,7 +16,7 @@ public class FileController {
     /**
      * @param file 文件导入
      */
-    @GetMapping
+    @GetMapping("szdgf")
     public void importss(MultipartFile file) {
 
     }

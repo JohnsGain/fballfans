@@ -33,6 +33,8 @@ spring:
     user:
       name: zplan
       password: 123456
+  mvc:
+    static-path-pattern:
 eureka:
   instance:
     prefer-ip-address: true
