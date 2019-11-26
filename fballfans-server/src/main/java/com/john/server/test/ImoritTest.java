@@ -3,9 +3,10 @@ package com.john.server.test;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
-import cn.afterturn.easypoi.util.PoiPublicUtil;
+import com.google.common.util.concurrent.AtomicDouble;
 import com.john.server.service.dto.Product;
 import org.junit.Test;
+import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.io.File;
 import java.util.List;
@@ -17,6 +18,19 @@ import java.util.List;
  * @since jdk1.8
  */
 public class ImoritTest {
+
+    @Test
+    public void test() {
+        AtomicDouble atomicDouble = new AtomicDouble();
+        atomicDouble.set(5);
+        boolean b = atomicDouble.compareAndSet(4, 8);
+//        CaffeineCache
+
+        atomicDouble.compareAndSet(5, 6);
+        System.out.println(atomicDouble.get());
+        System.out.println(atomicDouble.addAndGet(0.5));
+
+    }
 
     @Test
     public void imports() {

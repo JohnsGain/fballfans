@@ -4,7 +4,7 @@ spring:
     password: warehouse
 
   application:
-    name: threefei-auth
+    name: threefei-server
   datasource:
     url: jdbc:mysql://211.159.185.172:3306/warehouse?useUnicode=yes&characterEncode=utf-8&useSSL=false
     username: root
@@ -44,7 +44,7 @@ imooc:
       loginPage: /security/needlogin
 
 server:
-  port: 8777
+  port: 8778
 management:
   endpoints:
     web:
