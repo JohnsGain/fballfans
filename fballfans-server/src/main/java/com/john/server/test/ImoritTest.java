@@ -6,7 +6,6 @@ import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.john.server.service.dto.Product;
 import org.junit.Test;
-import org.springframework.cache.caffeine.CaffeineCache;
 
 import java.io.File;
 import java.util.List;
@@ -21,6 +20,7 @@ public class ImoritTest {
 
     @Test
     public void test() {
+//        AbstractQueuedSynchronizer
         AtomicDouble atomicDouble = new AtomicDouble();
         atomicDouble.set(5);
         boolean b = atomicDouble.compareAndSet(4, 8);
