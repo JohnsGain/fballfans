@@ -4,10 +4,12 @@ import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
 import com.google.common.util.concurrent.AtomicDouble;
+import com.john.server.domain.entity.Order;
 import com.john.server.service.dto.Product;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,5 +49,18 @@ public class ImoritTest {
         List<Product> failList = excel.getFailList();
 //        System.out.println(failList.stream().map(item->item.get));
     }
+
+    /**
+     * 使用Collectios.nCopy方法
+     */
+    @Test
+    public void nCopy() {
+        Order order = new Order();
+        order.setId(5);
+        List<Order> orders = Collections.nCopies(5, order);
+        orders.forEach(System.out::println);
+    }
+
+
 
 }
