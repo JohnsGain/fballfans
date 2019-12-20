@@ -71,7 +71,8 @@ public class ImoritTest {
      * @see Integer.IntegerCache
      */
     @Test
-    public void intCompare() {
+    public void intCompare() throws InterruptedException {
+
         Integer a = 5;
         Integer b = 5;
         System.out.println(a == b);
@@ -81,6 +82,7 @@ public class ImoritTest {
         System.out.println(c == dc);
         boolean ge = ge();
         System.out.println(ge);
+
     }
 
     private boolean ge() {
