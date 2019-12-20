@@ -10,6 +10,8 @@ import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.channels.ServerSocketChannel;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,7 +87,10 @@ public class ImoritTest {
 
     }
 
-    private boolean ge() {
+    private boolean ge() throws IOException {
+        try (ServerSocketChannel open = ServerSocketChannel.open();) {
+
+        }
         boolean fla = false;
         for (; ; ) {
             if (5 == RandomUtils.nextInt(0, 9)) {
@@ -95,6 +100,9 @@ public class ImoritTest {
                 return false;
             }
         }
+
+
+
     }
 
 
