@@ -6,8 +6,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.DefaultJwtSigner;
-import io.jsonwebtoken.impl.crypto.JwtSigner;
 import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Date;
@@ -125,7 +124,7 @@ public class JwtTokenUtil {
         if (split.length < 3) {
             return null;
         }
-        String payload = new String(Base64.decodeBase64(split[1]));
+        String payload = new String(Base64.decodeBase64(split[1]), Charset.defaultCharset());
         return JSON.parseObject(payload, SysUserOutput.class);
     }
 

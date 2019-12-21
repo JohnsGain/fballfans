@@ -113,13 +113,18 @@ public class VerifyCodeUtils {
 		}
 		File dir = outputFile.getParentFile();
 		if (!dir.exists()) {
-			dir.mkdirs();
+			boolean mkdirs = dir.mkdirs();
+			if (mkdirs) {
+				System.out.println("seucces");
+			}
 		}
 		try {
-			outputFile.createNewFile();
-			FileOutputStream fos = new FileOutputStream(outputFile);
-			outputImage(w, h, fos, code);
-			fos.close();
+			boolean newFile = outputFile.createNewFile();
+			if (newFile) {
+				FileOutputStream fos = new FileOutputStream(outputFile);
+				outputImage(w, h, fos, code);
+				fos.close();
+			}
 		} catch (IOException e) {
 			throw e;
 		}

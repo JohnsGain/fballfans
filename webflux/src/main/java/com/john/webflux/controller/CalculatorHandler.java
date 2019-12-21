@@ -44,7 +44,7 @@ public class CalculatorHandler {
 
     private int parseOperant(ServerRequest request, String param) {
         String value = request.queryParam(param).orElse("0");
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
 }

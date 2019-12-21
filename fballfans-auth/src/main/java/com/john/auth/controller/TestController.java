@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -60,7 +61,7 @@ public class TestController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String tset(HttpServletRequest request) throws IOException {
         String authType = request.getAuthType();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream(),StandardCharsets.UTF_8));
         StringBuilder builder = new StringBuilder();
         String content = null;
         while ((content = bufferedReader.readLine()) != null) {
