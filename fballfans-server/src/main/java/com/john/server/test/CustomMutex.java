@@ -1,4 +1,4 @@
-package com.john.server.config;
+package com.john.server.test;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;

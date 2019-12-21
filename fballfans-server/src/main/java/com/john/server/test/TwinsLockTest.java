@@ -1,4 +1,4 @@
-package com.john.server.config;
+package com.john.server.test;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.slf4j.Logger;

@@ -73,7 +73,7 @@ public class ImoritTest {
      * @see Integer.IntegerCache
      */
     @Test
-    public void intCompare() throws InterruptedException {
+    public void intCompare() throws InterruptedException, IOException {
 
         Integer a = 5;
         Integer b = 5;

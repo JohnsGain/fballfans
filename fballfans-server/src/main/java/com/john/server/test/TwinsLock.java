@@ -1,4 +1,4 @@
-package com.john.server.config;
+package com.john.server.test;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
