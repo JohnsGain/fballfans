@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
@@ -57,8 +56,7 @@ public class RedisDistributedLockService {
             return true;
         } else {
             try {
-                Long expire = redisTemplate.getExpire(KEY, TimeUnit.MICROSECONDS);
-                expire = (expire == null) ? 0 : expire;
+                long expire = redisTemplate.getExpire(KEY, TimeUnit.MICROSECONDS);
                 TimeUnit.MICROSECONDS.sleep(expireTime - expire - RandomUtils.nextLong(0, 10));
             } catch (InterruptedException e) {
                 //可能线程睡眠失败，如果这种情况发生，就继续去获取锁

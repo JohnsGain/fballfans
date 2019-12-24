@@ -25,15 +25,14 @@ public class ImoritTest {
 
     @Test
     public void test() {
-//        AbstractQueuedSynchronizer
         AtomicDouble atomicDouble = new AtomicDouble();
         atomicDouble.set(5);
         boolean b = atomicDouble.compareAndSet(4, 8);
-//        CaffeineCache
 
-        atomicDouble.compareAndSet(5, 6);
-        System.out.println(atomicDouble.get());
-        System.out.println(atomicDouble.addAndGet(0.5));
+        while (atomicDouble.compareAndSet(5, 6)) {
+            System.out.println(atomicDouble.get());
+            System.out.println(atomicDouble.addAndGet(0.5));
+        }
 
     }
 
@@ -59,7 +58,7 @@ public class ImoritTest {
     @Test
     public void nCopy() {
         Order order = new Order();
-        order.setId(5);
+        order.setId(5L);
         List<Order> orders = Collections.nCopies(5, order);
         orders.forEach(System.out::println);
 
@@ -101,9 +100,6 @@ public class ImoritTest {
             }
         }
 
-
-
     }
-
 
 }

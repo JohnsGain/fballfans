@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private long memberId;
     private long metaOrderId;
     private String flowId;
