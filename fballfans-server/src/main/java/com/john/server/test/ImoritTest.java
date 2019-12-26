@@ -12,8 +12,9 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangjuwa
@@ -100,6 +101,27 @@ public class ImoritTest {
             }
         }
 
+    }
+
+    /**
+     * @see Iterator#forEachRemaining(Consumer)
+     * 用于替代
+     * while(iterator.hasNext()){
+     *     function.apply(iterator.next());
+     * }
+     */
+    @Test
+    public void foreachRemain() {
+        List<String> list=new ArrayList<>();
+        List<Integer> collect = new Random().ints(0,10).limit(10).boxed()
+                .collect(Collectors.toList());
+        Iterator<Integer> iterator = collect.listIterator();
+        iterator.forEachRemaining(item->{
+            if (item == 2) {
+                iterator.remove();
+                System.out.println("szdfgasgd");
+            }
+        });
     }
 
 }
