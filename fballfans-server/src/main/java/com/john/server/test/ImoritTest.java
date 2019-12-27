@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.john.server.domain.entity.Order;
 import com.john.server.service.dto.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 
@@ -14,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.channels.ServerSocketChannel;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
  * @date 2019-11-12 17:35
  * @since jdk1.8
  */
+@Slf4j
 public class ImoritTest {
 
     @Test
@@ -128,8 +132,26 @@ public class ImoritTest {
     @Test
     public void readJson() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        List list = mapper.readValue("[\"ui_member_after_sales\",\"api_serviceOrderPagination\",\"api_updateServiceOrder\",\"api_products\",\"api_allEnabledProviders\"]", List.class);
+        List list = mapper.readValue("[\"ui_member_after_sales\",\"api_serviceOrderPagination\",\"api_updateServiceOrder\",\"api_products\",\"api_allEnabedProviders\"]", List.class);
         System.out.println(list.size());
+    }
+
+    @Test
+    public void main() throws InterruptedException {
+        log.info("sdf");
+        CompletableFuture.runAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            log.info(Thread.currentThread().getName());
+        }).thenAccept((item) -> log.info("asdg"));
+        log.info("zsdgsadg");
+
+        //main线程完了进程就关了，所以要睡眠等待异步线程执行
+        TimeUnit.SECONDS.sleep(200);
+
     }
 
 }
