@@ -3,6 +3,7 @@ package com.john.server.test;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.result.ExcelImportResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.john.server.domain.entity.Order;
 import com.john.server.service.dto.Product;
@@ -107,21 +108,28 @@ public class ImoritTest {
      * @see Iterator#forEachRemaining(Consumer)
      * 用于替代
      * while(iterator.hasNext()){
-     *     function.apply(iterator.next());
+     * function.apply(iterator.next());
      * }
      */
     @Test
     public void foreachRemain() {
-        List<String> list=new ArrayList<>();
-        List<Integer> collect = new Random().ints(0,10).limit(10).boxed()
+        List<String> list = new ArrayList<>();
+        List<Integer> collect = new Random().ints(0, 10).limit(10).boxed()
                 .collect(Collectors.toList());
         Iterator<Integer> iterator = collect.listIterator();
-        iterator.forEachRemaining(item->{
+        iterator.forEachRemaining(item -> {
             if (item == 2) {
                 iterator.remove();
                 System.out.println("szdfgasgd");
             }
         });
+    }
+
+    @Test
+    public void readJson() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        List list = mapper.readValue("[\"ui_member_after_sales\",\"api_serviceOrderPagination\",\"api_updateServiceOrder\",\"api_products\",\"api_allEnabledProviders\"]", List.class);
+        System.out.println(list.size());
     }
 
 }
