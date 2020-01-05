@@ -137,7 +137,7 @@ public class ImoritTest {
     }
 
     @Test
-    public void main() throws InterruptedException {
+    public void sdfgsd() throws InterruptedException {
         log.info("sdf");
         CompletableFuture.runAsync(() -> {
             try {
@@ -153,5 +153,7 @@ public class ImoritTest {
         TimeUnit.SECONDS.sleep(200);
 
     }
+
+
 
 }
