@@ -8,7 +8,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.util.ClassUtils;
 
 import java.io.File;
@@ -17,10 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -182,12 +183,37 @@ public class ExportTest {
     }
 
     /**
+     * 创建一个新文件，往里面写数据
+     */
+    @Test
+    public void nioFile() throws IOException {
+        String key = "dsafasg";
+        Path path = Paths.get("/Users/ligeit/Desktop/hallen/tbl-api-server/src/main/java/com/ligeit/ec/report/common/service", "sdf.pem");
+        Files.createFile(path);
+        Files.write(path, key.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+
+    }
+
+    /**
      * 获取所有redis  满足某个通配符匹配的 key
      */
     @Test
     public void getAllkeys() {
         RedisTemplate redisTemplate = new RedisTemplate();
         Set keys = redisTemplate.keys("dgdg*");
+
+        //或者使用。。。
+        Set<Object> objects = Collections.newSetFromMap(new HashMap<>(16));
+        redisTemplate.execute((RedisCallback) connetion -> {
+//            connetion.keys()
+            Cursor<byte[]> scan = connetion.scan(ScanOptions.scanOptions().count(Long.MAX_VALUE).match("ddxx*").build());
+            scan.forEachRemaining(item -> {
+                String keuy = new String(item, StandardCharsets.UTF_8);
+                objects.add(keuy);
+            });
+
+            return null;
+        });
     }
 
 }
