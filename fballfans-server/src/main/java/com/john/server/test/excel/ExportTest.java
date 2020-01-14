@@ -3,6 +3,8 @@ package com.john.server.test.excel;
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.TemplateExportParams;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisURI;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -188,7 +190,7 @@ public class ExportTest {
     @Test
     public void nioFile() throws IOException {
         String key = "dsafasg";
-        Path path = Paths.get("/Users/ligeit/Desktop/hallen/tbl-api-server/src/main/java/com/ligeit/ec/report/common/service", "sdf.pem");
+        Path path = Paths.get("/Users/ligeit/Documents/project/fballfans/fballfans-server/src/main/java/com/john/server/test/excel/", "sdf.pem");
         Files.createFile(path);
         Files.write(path, key.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
 
@@ -201,8 +203,15 @@ public class ExportTest {
     public void getAllkeys() {
         RedisTemplate redisTemplate = new RedisTemplate();
         Set keys = redisTemplate.keys("dgdg*");
+        redisTemplate.opsForSet().add("k1", "v1");
+        redisTemplate.opsForSet().add("k1", "v2");
 
-        //或者使用。。。
+
+        redisTemplate.opsForHash().put("BRAND_DATA" + 1, "PAGE-0,SIZE-10", "pageContent");
+        //        redisTemplate.opsForCluster().keys()
+//        redisTemplate.opsForSet().members("ke")
+        Cursor cursor = redisTemplate.opsForSet().scan("k*", ScanOptions.scanOptions().count(5).match("k*").build());
+        //或者使用。。。,没见过这样用的。
         Set<Object> objects = Collections.newSetFromMap(new HashMap<>(16));
         redisTemplate.execute((RedisCallback) connetion -> {
 //            connetion.keys()
@@ -215,5 +224,16 @@ public class ExportTest {
             return null;
         });
     }
+
+    @Test
+    public void lettuce() {
+        RedisURI redisUri = RedisURI.Builder.redis("localhost")
+                .withSsl(true)
+                .withPassword("authentication")
+                .withDatabase(2)
+                .build();
+        RedisClient client = RedisClient.create(redisUri);
+    }
+
 
 }
