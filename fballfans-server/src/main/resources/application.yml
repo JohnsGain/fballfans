@@ -10,12 +10,8 @@ spring:
     async:
       request-timeout: PT0S
 
-#      spring.rabbitmq.host=127.0.0.1
-#      spring.rabbitmq.virtual-host=johnawll
-#      spring.rabbitmq.username=johnawll
-#      spring.rabbitmq.password=123456
 auth:
-  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit,/cron,/jack
+  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit,/cron,/jack,/redis/*
 
 
 management:

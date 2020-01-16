@@ -76,5 +76,5 @@ jwt:
 #    暂时改为10天
     expiration-seconds: 864000
 
-auth:
-  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error
+#auth:
+#  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error
