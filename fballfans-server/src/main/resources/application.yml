@@ -1,19 +1,15 @@
 spring:
   profiles:
 #公司配置
-#    active: com
+    active: com
 #    家用配置
-    active: dev
+#    active: dev
   main:
     allow-bean-definition-overriding: true
   mvc:
     async:
       request-timeout: PT0S
 
-  rabbitmq:
-    username: johnawll
-    password: 123456
-    virtual-host: johnawll
 #      spring.rabbitmq.host=127.0.0.1
 #      spring.rabbitmq.virtual-host=johnawll
 #      spring.rabbitmq.username=johnawll

@@ -5,14 +5,16 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.*;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 
 @Data()
-@Entity
-@Table(name = "orders")
+//@Entity
+//@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -12,12 +12,16 @@ spring:
     host: 211.159.185.172
     password: warehouse
 
+  rabbitmq:
+    username: johnawll
+    password: 123456
+    virtual-host: johnawll
   application:
     name: threefei-server
   datasource:
     url: jdbc:mysql://211.159.185.172:3306/warehouse?useUnicode=yes&characterEncode=utf-8&useSSL=false
-    username: root
-    password: yu718580
+    username: john
+    password: zhangJW.428
     driver-class-name: com.mysql.jdbc.Driver
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource

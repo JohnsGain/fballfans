@@ -242,7 +242,6 @@ public class ExportTest {
 
     @Test
     public void lettuce() {
-
         RedisURI redisUri = RedisURI.Builder.redis("localhost")
                 .withSsl(true)
                 .withPassword("authentication")
