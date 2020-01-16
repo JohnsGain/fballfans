@@ -6,6 +6,7 @@ import cn.afterturn.easypoi.excel.entity.TemplateExportParams;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
@@ -206,6 +207,7 @@ public class ExportTest {
         redisTemplate.opsForSet().add("k1", "v1");
         redisTemplate.opsForSet().add("k1", "v2");
 
+        redisTemplate.opsForHyperLogLog().add("hyperlog", "log1", "log2");
 
         redisTemplate.opsForHash().put("BRAND_DATA" + 1, "PAGE-0,SIZE-10", "pageContent");
         //        redisTemplate.opsForCluster().keys()
@@ -226,7 +228,21 @@ public class ExportTest {
     }
 
     @Test
+    public void enumutile() {
+        Map<String, FruitEnum> enumMap = EnumUtils.getEnumMap(FruitEnum.class);
+        enumMap.forEach((k,v)->log.info("key={},value={}", k,v));
+
+        List<FruitEnum> enumList = EnumUtils.getEnumList(FruitEnum.class);
+        System.out.println(enumList.size());
+        boolean validEnum = EnumUtils.isValidEnum(FruitEnum.class, "zsjg");
+        System.out.println(validEnum);
+        boolean apple = EnumUtils.isValidEnumIgnoreCase(FruitEnum.class, "APPLE");
+        System.out.println("isValidEnumIgnoreCase  "+apple);
+    }
+
+    @Test
     public void lettuce() {
+
         RedisURI redisUri = RedisURI.Builder.redis("localhost")
                 .withSsl(true)
                 .withPassword("authentication")
