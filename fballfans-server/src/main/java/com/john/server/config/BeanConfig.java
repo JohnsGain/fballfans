@@ -32,6 +32,7 @@ public class BeanConfig {
 //设置序列化方法
         redisTemplate.setKeySerializer(redisTemplate.getStringSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper));
+//        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
         return redisTemplate;
     }
 
