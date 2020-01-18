@@ -17,7 +17,7 @@ spring:
     password: 123456
     virtual-host: johnawll
   application:
-    name: threefei-server
+    name: fballfans-server
   datasource:
     url: jdbc:mysql://211.159.185.172:3306/warehouse?useUnicode=yes&characterEncode=utf-8&useSSL=false
     username: john
