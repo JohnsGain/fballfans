@@ -21,10 +21,13 @@ public class TransactionController {
 
 
     @GetMapping("t1")
-    public void t1(String remark) {
+    public void t1(String remark) throws InterruptedException {
         testService.t1(remark);
     }
-
+    @GetMapping("t1")
+    public void tt2(String remark) throws InterruptedException {
+        testService.tt2(remark);
+    }
     @GetMapping("t12")
     public SysAcl t12() {
         return testService.get();
