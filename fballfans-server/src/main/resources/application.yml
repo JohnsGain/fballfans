@@ -18,6 +18,13 @@ spring:
         globally_quoted_identifiers: true
         jdbc:
           time_zone: Asia/Shanghai
+  task:
+    execution:
+      pool:
+        allow-core-thread-timeout: true
+        max-size: 100
+        queue-capacity: 100
+
 auth:
   permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit,/cron,/jack,/redis/*
 
