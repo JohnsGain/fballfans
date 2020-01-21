@@ -6,6 +6,7 @@ import com.john.server.domain.repository.SysRoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
@@ -26,7 +27,7 @@ public class TestService {
     @Autowired
     private SysRoleRepository sysRoleRepository;
 
-//    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void t1(String remark) throws InterruptedException {
 
         SysAcl sysAcl = sysAclRepository.findById((long) 2).orElse(null);
@@ -42,7 +43,7 @@ public class TestService {
     }
 
     @Transactional
-    public void tt2(String remark) throws InterruptedException {
+    public SysAcl tt2(String remark) throws InterruptedException {
 
         SysAcl sysAcl = sysAclRepository.findById((long) 2).orElse(null);
         if (sysAcl != null) {
@@ -51,9 +52,10 @@ public class TestService {
             SysAcl sysAcl1 = sysAclRepository.findById(2L).get();
             log.info("结果={}", sysAcl1.getRemark());
         }
+        return get();
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public SysAcl get() {
         SysAcl sysAcl = sysAclRepository.findById((long) 2).orElse(null);
         return sysAcl;
