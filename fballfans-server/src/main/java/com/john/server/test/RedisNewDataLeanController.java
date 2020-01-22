@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.Cursor;
@@ -47,10 +46,21 @@ public class RedisNewDataLeanController {
 
     }
 
+    /**
+     * @return geo spartial数据结构，可以查询某个点的经纬度，查询两个点之间的距离，查询某个点某个半径范围的数据
+     */
     @GetMapping("geo")
     public String geo() {
         GeoOperations<String, Serializable> geo = redisTemplate.opsForGeo();
         return "";
+    }
+
+    /**
+     * hyperloglog数据类型使用
+     */
+    @GetMapping("hyperloglog")
+    public void hyperloglog() {
+        redisService.hyperloglog();
     }
 
     @GetMapping("scan")
@@ -101,11 +111,7 @@ public class RedisNewDataLeanController {
         return "pipeline";
     }
 
-    @Test
-    public void ch() {
-        int i = Integer.valueOf("FFFF", 16);
-        System.out.println(i);
-    }
+
 
 
 }

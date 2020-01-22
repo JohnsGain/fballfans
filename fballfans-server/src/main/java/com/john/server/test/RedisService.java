@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.GeoOperations;
+import org.springframework.data.redis.core.HyperLogLogOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author zhangjuwa
@@ -64,5 +66,34 @@ public class RedisService {
         }
 
 //            redisTemplate.opsF
+    }
+
+    /**
+     * 测试 hyperloglog数据类型使用，
+     * <p>
+     * HyperLogLog是Probabilistic data Structures的一种，这类数据结构的基本大的思路就是使用统计概率上的算法，
+     * 牺牲数据的精准性来节省内存的占用空间及提升相关操作的性能。最典型的使用场景就是统计网站的每日UV
+     */
+    public void hyperloglog() {
+
+        String uv1 = "uv96";
+        String uv2 = "uv97";
+        HyperLogLogOperations<String, Serializable> hyperLogLog = redisTemplate.opsForHyperLogLog();
+        IntStream.rangeClosed(0, 100).forEach(itm -> {
+            hyperLogLog.add(uv1, "user" + itm);
+            hyperLogLog.add(uv2, "user" + itm / 2);
+        });
+        Long size = hyperLogLog.size(uv1);
+        log.info("uv1={}", size);
+        size = hyperLogLog.size(uv2);
+        log.info("uv2={}", size);
+        size = hyperLogLog.size(uv1, uv2);
+        log.info("uv2,uv1={}", size);
+        String uv1uv2 = "uv67";
+        Long union = hyperLogLog.union(uv1uv2, uv1, uv2);
+        log.info("union={}",union);
+
+        Long realCount = redisTemplate.opsForHyperLogLog().size(uv1uv2);
+        System.out.println(realCount);
     }
 }
