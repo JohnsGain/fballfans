@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2019-11-12 17:13
  * @since jdk1.8
  */
-//@SpringCloudApplication
 @SpringBootApplication
 public class FballfansServerApplication {
 

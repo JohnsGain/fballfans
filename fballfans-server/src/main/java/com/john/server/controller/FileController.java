@@ -17,7 +17,7 @@ public class FileController {
      * @param file 文件导入
      */
     @GetMapping("szdgf")
-    public void importss(MultipartFile file) {
-
+    public String importss(MultipartFile file) {
+        return "hellow";
     }
 }
