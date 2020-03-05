@@ -44,7 +44,9 @@ public class CommonBeanConfig {
     public CommonBeanConfig(SecurityProperties securityProperties, RedisConnectionFactory redisConnectionFactory) {
         this.securityProperties = securityProperties;
         this.redisConnectionFactory = redisConnectionFactory;
+
     }
+//
 
 
 //    /**

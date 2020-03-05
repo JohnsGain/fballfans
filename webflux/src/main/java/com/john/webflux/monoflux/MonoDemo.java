@@ -76,4 +76,9 @@ public class MonoDemo {
         });
         objectMono.subscribe(item -> log.info(item+" jio"));
     }
+
+    @Test
+    public void test(){
+
+    }
 }

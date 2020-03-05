@@ -31,7 +31,9 @@ public class ImoritTest {
 
     @Test
     public void test() {
+
         AtomicDouble atomicDouble = new AtomicDouble();
+
         atomicDouble.set(5);
         boolean b = atomicDouble.compareAndSet(4, 8);
 
