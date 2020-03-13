@@ -1,6 +1,8 @@
 package com.john.server.domain.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,6 +33,7 @@ public class SysRole implements Serializable {
 
     private String operator;
 
+    @CreationTimestamp
     private LocalDateTime createTime;
 
 

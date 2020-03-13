@@ -65,6 +65,8 @@ public class ImoritTest {
      */
     @Test
     public void nCopy() {
+        Set<Object> objects = new TreeSet<>();
+//        SortedSet
         Order order = new Order();
         order.setId(5L);
         List<Order> orders = Collections.nCopies(5, order);
@@ -155,7 +157,6 @@ public class ImoritTest {
         TimeUnit.SECONDS.sleep(200);
 
     }
-
 
 
 }

@@ -3,6 +3,7 @@ package com.john.server.domain.entity;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -15,13 +16,13 @@ import java.util.Objects;
  * @since jdk1.8
  */
 @Data()
-//@Entity
-//@Table(name = "sys_acl")
+@Entity
+@Table(name = "sys_acl")
 public class SysAcl implements GrantedAuthority, Serializable {
 
     private static final long serialVersionUID = 9190379140299876837L;
-    //    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String code;
