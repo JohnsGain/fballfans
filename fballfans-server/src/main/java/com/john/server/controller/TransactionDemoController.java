@@ -31,11 +31,11 @@ public class TransactionDemoController {
     }
 
     @GetMapping("add")
-    public String add(SysRole sysRole,Long id) {
+    public String add(SysRole sysRole,Long id,int sleep) throws InterruptedException {
         sysRole = new SysRole();
         sysRole.setOperator("1");
         sysRole.setId(id);
-        transactionService.add(sysRole);
+        transactionService.add(sysRole,sleep);
         return "success";
 
     }

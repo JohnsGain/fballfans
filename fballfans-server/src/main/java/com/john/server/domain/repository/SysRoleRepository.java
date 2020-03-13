@@ -19,9 +19,14 @@ public interface SysRoleRepository extends JpaRepository<SysRole, Long> {
     @Lock(LockModeType.PESSIMISTIC_READ)
     List<SysRole> findByOperator(String operator);
 
-    List<SysRole> findByIdBetween(Long gte,Long lte);
+    List<SysRole> findByIdBetween(Long gte, Long lte);
+
 
     @Query(value = "SELECT * FROM sys_role WHERE operator='1' for update ", nativeQuery = true)
     List<SysRole> findByOperatorForUpdate(String operator);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query(value = "  FROM SysRole WHERE id=?1 ")
+    SysRole findByIdLock(Long id);
 
 }

@@ -1,21 +1,28 @@
 package com.john.server.service;
 
+import com.john.server.config.WebSocketServer;
 import com.john.server.domain.entity.SysRole;
 import com.john.server.domain.repository.SysRoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * mysql数据库加事务并不会对数据加锁，另一个事务同样可以对同一条记录进行写操作，
  * 这种情况会造成更新丢失，后提交的事务把先提交的事务对同一条数据的更新覆盖了。
+ * <p>
+ * 如果希望更改某一条记录的时候，不让另一个事务获取到这条记录，需要显示加上写锁，
  *
  * @author zhangjuwa
  * @apiNote
@@ -77,13 +84,31 @@ public class TransactionService {
         System.out.println(sysRole);
     }
 
+    /**
+     * @param sysRole
+     * @param sleep
+     * @throws InterruptedException
+     */
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void add(SysRole sysRole) {
-        SysRole sysRole1 = sysRoleRepository.findById((long) 6).orElse(null);
+    public void add(SysRole sysRole, int sleep) throws InterruptedException {
+        log.info("进来这里");
+        SysRole sysRole1 = sysRoleRepository.findByIdLock((long) 6);
+        log.info("读取到数据");
         if (sysRole1 == null) {
             return;
         }
-        sysRole1.setRemark("XXXXXX");
+        sysRole1.setRemark("XXXXXX" + RandomStringUtils.random(4, "1234567890"));
         sysRoleRepository.save(sysRole1);
+        log.info("更新完了");
+        //睡眠期间，另一个线程插入一条新的 数据
+        TimeUnit.SECONDS.sleep(sleep);
+        log.info("返回");
     }
+
+//    @Scheduled(cron = "*/5 * * * * ?")
+//    public void sendMessage() throws IOException {
+//        WebSocketServer.sendInfo(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), null);
+//    }
+
+
 }
