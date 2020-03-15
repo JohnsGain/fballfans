@@ -47,19 +47,15 @@ public class TransactionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void rr() throws InterruptedException {
         //如果要防止其他事务并发读取当前记录，要加锁
-        List<SysRole> byOperator = sysRoleRepository.findByOperatorForUpdate("1");
+        List<SysRole> byOperator = sysRoleRepository.findByOperator("1");
 
         log.info("书数据量={}", byOperator.size());
 
         //睡眠期间，另一个线程插入一条新的 数据
         TimeUnit.SECONDS.sleep(20);
-//普通的读是筷照读
-        byOperator = sysRoleRepository.findByOperator("1");
-
-        log.info("书数据量={}", byOperator.size());
 
         SysRole sysRole = new SysRole();
-        sysRole.setOperator("1");
+        sysRole.setOperator("2");
         sysRoleRepository.save(sysRole);
 
         //睡眠期间，另一个线程插入一条新的 数据
@@ -92,7 +88,8 @@ public class TransactionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void add(SysRole sysRole, int sleep) throws InterruptedException {
         log.info("进来这里");
-        SysRole sysRole1 = sysRoleRepository.findByIdLock((long) 6);
+//        SysRole sysRole1 = sysRoleRepository.findByIdLock((long) 6);
+        SysRole sysRole1 = sysRoleRepository.findById(5L).orElse(null);
         log.info("读取到数据");
         if (sysRole1 == null) {
             return;
