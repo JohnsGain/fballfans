@@ -56,14 +56,14 @@ public class RabbitmqController {
      * 测试通过TTL 死信队列的方式来实现延迟消息消费
      */
     @GetMapping("delayMessage")
-    public void delayMessage() {
-        String content = "发生消息" + System.currentTimeMillis();
+    public void delayMessage(long delay) {
+        String content = "发生消息延时" + delay;
         CorrelationData data = new CorrelationData();
         data.setId(UUID.randomUUID().toString());
         rabbitTemplate.convertAndSend(RabbitConfig.DELAY_EXCHANGE, RabbitConfig.DELAY_KEY,
                 content, message -> {
                     //注意这里时间要是字符串形式,单位 毫秒
-                    message.getMessageProperties().setExpiration("30000");
+                    message.getMessageProperties().setExpiration(""+delay);
                     return message;
 
                 });

@@ -22,46 +22,27 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class ConsumerOne {
+public class ConsumerDelayMessage {
 
     private final SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory;
 
     private final CachingConnectionFactory cachingConnectionFactory;
 
-    public ConsumerOne(CachingConnectionFactory cachingConnectionFactory, SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory) {
+    public ConsumerDelayMessage(CachingConnectionFactory cachingConnectionFactory, SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory) {
         this.cachingConnectionFactory = cachingConnectionFactory;
         this.simpleRabbitListenerContainerFactory = simpleRabbitListenerContainerFactory;
     }
 
-//
-//    /**
-//     * 如果 acknowledgeMode 设置成None，就是设置了amqp协议里面的消费自动确认，amqp代理发送了消息之后就从队列删除消息
-//     * @param content
-//     * @throws InterruptedException
-//     */
-//    @RabbitHandler
-//    @RabbitListener(queues = RabbitConfig.QUEUE_A, containerFactory = "rabbitListenerContainerFactory",ackMode = "NONE")
-//    public void process(String content) throws InterruptedException {
-//        TimeUnit.SECONDS.sleep(5);
-//        if (content.length() > 9) {
-//            throw new RuntimeException("szdgd");
-//        }
-//        log.info("接受到队列={}的消息内容={}", RabbitConfig.QUEUE_A, content);
-//    }
-
-
     /**
-     * 如果 acknowledgeMode 设置成None，就是设置了amqp协议里面的消费自动确认，amqp代理发送了消息之后就从队列删除消息
-     * 从spring-amqp 2.2开始，支持批量消费，一次接受一批消息
+     * 处理死信队列发过来的延时消息
+     * receive_key
      *
      * @param content
      * @throws InterruptedException
      */
     @RabbitHandler
-    @RabbitListener(queues = RabbitConfig.QUEUE_A, containerFactory = "rabbitListenerContainerFactory")
-    public void processBatch(List<Message> content, Channel channel,
-                             @Headers Map<String, Object> map) throws InterruptedException, IOException {
-//        TimeUnit.SECONDS.sleep(2);
+    @RabbitListener(queues = RabbitConfig.RECEIVE_QUEUE, containerFactory = "rabbitListenerContainerFactory")
+    public void receiveMessage(List<Message> content, Channel channel, @Headers Map<String, Object> map) throws InterruptedException, IOException {
         log.info("批量拉取消息={}", content.size());
         if (content.size() > 9) {
             throw new RuntimeException("szdgd");
@@ -72,7 +53,8 @@ public class ConsumerOne {
             channel.basicAck(deliveryTag, true);
         }
 
-//        /**
+
+        //        /**
 //         * basicRecover方法是进行补发操作，
 //         * 其中的参数如果为true是把消息退回到queue但是有可能被其它的consumer(集群)接收到，
 //         * 设置为false是只补发给当前的consumer
