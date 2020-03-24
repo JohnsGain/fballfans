@@ -95,5 +95,7 @@ public class RedisService {
 
         Long realCount = redisTemplate.opsForHyperLogLog().size(uv1uv2);
         System.out.println(realCount);
+
+
     }
 }

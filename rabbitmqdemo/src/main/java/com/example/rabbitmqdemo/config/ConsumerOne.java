@@ -3,11 +3,15 @@ package com.example.rabbitmqdemo.config;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.handler.annotation.Headers;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -27,6 +31,9 @@ public class ConsumerOne {
     private final SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory;
 
     private final CachingConnectionFactory cachingConnectionFactory;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
 
     public ConsumerOne(CachingConnectionFactory cachingConnectionFactory, SimpleRabbitListenerContainerFactory simpleRabbitListenerContainerFactory) {
         this.cachingConnectionFactory = cachingConnectionFactory;
@@ -62,6 +69,7 @@ public class ConsumerOne {
     public void processBatch(List<Message> content, Channel channel,
                              @Headers Map<String, Object> map) throws InterruptedException, IOException {
 //        TimeUnit.SECONDS.sleep(2);
+        age:
         log.info("批量拉取消息={}", content.size());
         if (content.size() > 9) {
             throw new RuntimeException("szdgd");
@@ -81,4 +89,25 @@ public class ConsumerOne {
     }
 
 
+    /**
+     * 全部使用注解搞定，不再声明队列，交换机，绑定
+     * 直接接受对象，需要对象实现序列化接口
+     * @throws InterruptedException
+     */
+    @RabbitHandler
+    @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "anno_queue", autoDelete = "true", durable = "false"),
+            exchange = @Exchange(value = "anno_exchange", autoDelete = Exchange.TRUE, durable = Exchange.FALSE),
+            key = "anno_routingkey"),
+            containerFactory = "rabbitListenerContainerFactory")
+    public void allAnnotation(@Payload User user, Channel channel,
+                              @Headers Map<String, Object> map) throws InterruptedException, IOException {
+//        TimeUnit.SECONDS.sleep(2);
+
+        Object tag = map.get(AmqpHeaders.DELIVERY_TAG);
+        if (tag != null) {
+            channel.basicAck(Long.parseLong(tag.toString()),false);
+        }
+        log.info("接受到队列={}的消息内容={}", RabbitConfig.QUEUE_A, user);
+
+    }
 }

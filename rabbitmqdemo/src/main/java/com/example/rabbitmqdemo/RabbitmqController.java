@@ -3,7 +3,9 @@ package com.example.rabbitmqdemo;
 import com.example.rabbitmqdemo.config.RabbitConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +23,9 @@ import java.util.UUID;
 @RequestMapping("mq")
 @Slf4j
 public class RabbitmqController {
+
+//    @Autowired
+//    private RabbitAdmin rabbitAdmin;
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -64,6 +69,8 @@ public class RabbitmqController {
                 content, message -> {
                     //注意这里时间要是字符串形式,单位 毫秒
                     message.getMessageProperties().setExpiration(""+delay);
+                    //发送到哪里，可以灵活 使用这个参数配置，在RPC实现里面指定回调队列
+//                    message.getMessageProperties().setReplyTo("");
                     return message;
 
                 });

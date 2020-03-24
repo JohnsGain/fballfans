@@ -1,5 +1,6 @@
 package com.example.rabbitmqdemo.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -8,6 +9,8 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.ContentTypeDelegatingMessageConverter;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -59,6 +62,9 @@ public class RabbitConfig implements BeanPostProcessor {
 
     @Autowired
     private ConfirmCallBackListenerImpl confirmCallBackListener;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public RabbitConfig(RabbitProperties rabbitProperties) {
         this.rabbitProperties = rabbitProperties;
@@ -166,10 +172,12 @@ public class RabbitConfig implements BeanPostProcessor {
 //        BatchMessagingMessageListenerAdapter
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         configurer.configure(factory, connectionFactory);
-//        factory.setMessageConverter(new Jackson2JsonMessageConverter());
+//        ContentTypeDelegatingMessageConverter 这个转换器可以作全局转换器，它里面可以包含多个转换器
+        //        factory.setMessageConverter(new Jackson2JsonMessageConverter(objectMapper));
         //启用批量消费
         factory.setConsumerBatchEnabled(true);
         factory.setBatchListener(true);
+
         return factory;
     }
 
