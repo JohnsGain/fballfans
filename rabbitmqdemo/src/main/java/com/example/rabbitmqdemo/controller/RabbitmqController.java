@@ -1,4 +1,4 @@
-package com.example.rabbitmqdemo;
+package com.example.rabbitmqdemo.controller;
 
 import com.example.rabbitmqdemo.config.RabbitConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,6 @@ import java.util.UUID;
 @Slf4j
 public class RabbitmqController {
 
-//    @Autowired
-//    private RabbitAdmin rabbitAdmin;
 
     private final RabbitTemplate rabbitTemplate;
 

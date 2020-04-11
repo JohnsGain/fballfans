@@ -1,9 +1,6 @@
 package com.example.rabbitmqdemo.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,11 +8,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.io.Serializable;
 
 /**
  * @author zhangjuwa
@@ -43,6 +40,20 @@ public class CommonConfig {
         //类型反序列化会报错
         mapper.registerModule(new JavaTimeModule());
         return mapper;
+    }
+
+    /**
+     * redis 设置
+     */
+    @Bean
+    public RedisTemplate<String, Serializable> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(factory);
+//设置序列化方法
+        redisTemplate.setKeySerializer(redisTemplate.getStringSerializer());
+//        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper()));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        return redisTemplate;
     }
 
 //    public static void main(String[] args) throws JsonProcessingException {
