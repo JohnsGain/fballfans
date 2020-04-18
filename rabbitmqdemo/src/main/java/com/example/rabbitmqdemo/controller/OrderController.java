@@ -1,11 +1,11 @@
 package com.example.rabbitmqdemo.controller;
 
 import com.example.rabbitmqdemo.config.RabbitConfig;
+import com.example.rabbitmqdemo.config.Result;
 import com.example.rabbitmqdemo.domain.entity.Order;
 import com.example.rabbitmqdemo.domain.repository.OrderRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.john.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -66,7 +66,7 @@ public class OrderController {
 
         CorrelationData data = new CorrelationData();
         data.setId(UUID.randomUUID().toString());
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_A, RabbitConfig.ROUTINGKEY_A, objectMapper.writeValueAsString(order), data);
+        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_B, RabbitConfig.ROUTINGKEY_B, objectMapper.writeValueAsString(order), data);
         return new Result<>("订单创建中...");
     }
 
@@ -110,4 +110,5 @@ public class OrderController {
         List range = redisTemplate.opsForList().range(ORDER_LIST, 0, 10);
         return new Result<>(range);
     }
+
 }

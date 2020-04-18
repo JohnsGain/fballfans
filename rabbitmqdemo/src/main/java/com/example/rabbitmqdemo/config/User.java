@@ -1,6 +1,5 @@
 package com.example.rabbitmqdemo.config;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,10 +23,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class User {
 
-   private String name;
+    private String name;
 
 
-    private  Integer age;
+    private Integer age;
 
     private Duration duration;
 
@@ -36,7 +35,6 @@ public class User {
     private Timestamp createTime;
     private LocalDateTime now;
     private Date date;
-
 
 
 }
