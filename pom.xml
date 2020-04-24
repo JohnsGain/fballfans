@@ -16,6 +16,7 @@
         <module>elasticsearch6</module>
         <module>webflux</module>
         <module>fballfans-server</module>
+        <module>couchdb-demo</module>
     </modules>
     <!--<parent>-->
     <!--<groupId>org.springframework.boot</groupId>-->
