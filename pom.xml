@@ -114,13 +114,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.activiti.dependencies</groupId>
-                <artifactId>activiti-dependencies</artifactId>
-                <version>${activiti-dependencies.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
+          
         </dependencies>
     </dependencyManagement>
     <build>
@@ -144,14 +138,5 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>alfresco</id>
-            <name>Activiti Releases</name>
-            <url>https://artifacts.alfresco.com/nexus/content/repositories/activiti-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
+
 </project>
