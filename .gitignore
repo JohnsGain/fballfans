@@ -13,3 +13,4 @@ rabbitmqdemo/target/
 logs/
 webflux/src/test/
 webflux/target/
+/data/

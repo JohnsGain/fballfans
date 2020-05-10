@@ -1,4 +1,4 @@
-package com.john.couchdb.test;
+package com.john.couchdb.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
