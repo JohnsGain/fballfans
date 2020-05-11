@@ -87,7 +87,7 @@ eureka:
 
 logging:
   path: logs/log
-  config: classpath:logback-spring.xml
+  config: classpath:log4j2.xml
 
 xxl:
   job:
