@@ -21,7 +21,7 @@ public class EurekaServerApplication {
     }
 
     @EnableWebSecurity
-    public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
+    public static class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.csrf().disable();

@@ -137,7 +137,8 @@ public class AccountServiceImpl implements IAccountService {
         double longitude = 100;
         List<IndexQuery> list = new ArrayList<>();
         for (Account account : all) {
-            account.setId((account.getAccount_number() == null) ? 1111 : account.getAccount_number());
+            long accountNumber = account.getAccount_number();
+            account.setId(accountNumber);
             GeoPoint geoPoint = new GeoPoint(latitude + RandomUtils.nextDouble(0, 1),
                     longitude + RandomUtils.nextDouble(0, 2));
             account.setGeoPoint(geoPoint);

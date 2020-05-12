@@ -20,8 +20,14 @@ public class FileServiceImpl implements IFileService {
     @Value("${destination:默认目标}")
     private String destination;
 
+    private final Environment environment;
+
     @Autowired
-    private Environment environment;
+    private  PrinterService printerService;
+
+    public FileServiceImpl(Environment environment) {
+        this.environment = environment;
+    }
 
     @Override
     public void readValues() {

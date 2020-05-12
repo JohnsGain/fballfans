@@ -17,18 +17,20 @@ server:
 #  spring.redis.pool.min-idle: 0
 spring:
   application:
-    name: fballfans-auth
-  redis:
-    cluster:
-      nodes: DDBtest008:6379, DDBtest008:6380, DDBtest008:6381, DDBtest008:6382, DDBtest008:6383, DDBtest008:6384
+    name: fballfans-server
+#    cluster:
+#      nodes: DDBtest008:6379, DDBtest008:6380, DDBtest008:6381, DDBtest008:6382, DDBtest008:6383, DDBtest008:6384
 #      nodes: 211.159.185.172:6379
-#    password: warehouse
 
+  rabbitmq:
+    username: admin
+    password: ligeit
+    virtual-host: tbl
   datasource:
 #    url: jdbc:mysql://192.168.1.108:3306/test
-    url: jdbc:mysql://211.159.185.172:3306/warehouse?useUnicode=yes&characterEncode=utf-8&useSSL=false
-    username: root
-    password: yu718580
+    url: jdbc:mysql://211.159.185.172:3306/warehouse?useUnicode=yes&characterEncoding=utf-8&useSSL=false
+    username: john
+    password: zhangJW.428
     driver-class-name: com.mysql.jdbc.Driver
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource
@@ -43,6 +45,7 @@ spring:
       connection-timeout: 30000
       maximum-pool-size: 100
       minimum-idle: 5
+      connection-test-query: select 1 from dual
   main:
     allow-bean-definition-overriding: true
 eureka:
@@ -74,5 +77,5 @@ jwt:
 #    暂时改为10天
     expiration-seconds: 864000
 
-auth:
-  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error
+#auth:
+#  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error

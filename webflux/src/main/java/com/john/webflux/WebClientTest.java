@@ -3,6 +3,8 @@ package com.john.webflux;
 import com.john.webflux.domain.entity.User;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.function.Supplier;
+
 /**
  *
  * @author zhangjuwa
@@ -13,10 +15,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientTest {
 
     public static void main(String[] args) {
+
         User user = new User();
         user.setId(3);
         user.setName("johnsgd");
         WebClient webClient = WebClient.create("http://localhost:9203/test/id");
+
+        tt(() ->  String.class);
+
+    }
+
+    public static void tt(Supplier<Class> supplier) {
 
     }
 

@@ -1,0 +1,2 @@
+
+curl -X PUT http://admin:yu718580@127.0.0.1:5984/firstdb/ -d "{\"title\":\"There is Nothing Left to Lose\",\"artist\":\"Foo Fighters\"}" {"ok":true,"id":"6e1295ed6c29495e54cc05947f18c8af","rev":"1-4b39c2971c9ad54cb37e08fa02fec636"}

@@ -9,17 +9,24 @@ spring:
   mvc:
     async:
       request-timeout: PT0S
+  jpa:
+    show-sql: false
+    open-in-view: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        globally_quoted_identifiers: true
+        jdbc:
+          time_zone: Asia/Shanghai
+  task:
+    execution:
+      pool:
+        allow-core-thread-timeout: true
+        max-size: 100
+        queue-capacity: 100
 
-  rabbitmq:
-    username: johnawll
-    password: 123456
-    virtual-host: johnawll
-#      spring.rabbitmq.host=127.0.0.1
-#      spring.rabbitmq.virtual-host=johnawll
-#      spring.rabbitmq.username=johnawll
-#      spring.rabbitmq.password=123456
 auth:
-  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit,/cron,/jack
+  permits: /hello,/auth/needlogin,/auth/piccaptcha,/auth/token,/favicon.ico,/error,/emmit,/cron,/jack,/redis/*
 
 
 management:
@@ -30,4 +37,3 @@ management:
   endpoint:
     health:
       show-details: ALWAYS
-

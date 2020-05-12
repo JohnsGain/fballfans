@@ -9,6 +9,8 @@ fballfans-auth/src/main/java/test/
 fballfans-auth/target/
 fballfans-core/target/
 fballfans-eureka/target/
+rabbitmqdemo/target/
 logs/
 webflux/src/test/
 webflux/target/
+/data/

@@ -38,13 +38,13 @@ public class CalculatorHandler {
     private Mono<ServerResponse> calculate(ServerRequest request, BiFunction<Number, Number, Double> function) {
         Tuple2<Integer, Integer> tuple2 = Tuples.of(parseOperant(request, "v1"), parseOperant(request, "v2"));
         Mono<ServerResponse> body = ServerResponse.ok()
-                .body(Mono.just(function.apply(tuple2.getT1().intValue(), tuple2.getT2().intValue())), Double.class);
+                .body(Mono.just(function.apply(tuple2.getT1(), tuple2.getT2())), Double.class);
         return body;
     }
 
     private int parseOperant(ServerRequest request, String param) {
         String value = request.queryParam(param).orElse("0");
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
 }

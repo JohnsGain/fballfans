@@ -27,5 +27,15 @@
             <artifactId>javax.persistence-api</artifactId>
         </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+            <!--Spring Boot Maven plugin能够将Spring Boot应用打包为可执行的jar或war文件，
+          然后以通常的方式运行Spring Boot应用。Spring Boot Maven plugin能够将Spring
+          Boot应用打包为可执行的jar或war文件，然后以通常的方式运行Spring Boot应用。-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
