@@ -14,3 +14,4 @@ logs/
 webflux/src/test/
 webflux/target/
 /data/
+fballfans-server/target/
