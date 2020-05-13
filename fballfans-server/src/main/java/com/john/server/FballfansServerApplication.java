@@ -21,7 +21,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 public class FballfansServerApplication {
 
     public static void main(String[] args) {
-        //xx
+        //xx XX
         SpringApplication.run(FballfansServerApplication.class, args);
     }
 
