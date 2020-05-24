@@ -10,9 +10,5 @@ create table herb_back
 	remark text null comment '备注，介绍'
 );
 
-create fulltext index ft_function
-	on herb_back (functions);
 
-create index idx_na_am
-	on herb_back (name, amount);
 
