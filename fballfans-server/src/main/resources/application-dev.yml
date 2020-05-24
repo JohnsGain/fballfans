@@ -44,6 +44,8 @@ spring:
     user:
       name: zplan
       password: 123456
+  flyway:
+    baseline-on-migrate: true
 
 # mybatis配置
 mybatis:
@@ -118,5 +120,6 @@ xxl:
 #  xxl.job.executor.logpath=data/applogs/xxl-job/jobhandler
 #  ### xxl-job executor log-retention-days
 #  xxl.job.executor.logretentiondays=30
+
 
 
