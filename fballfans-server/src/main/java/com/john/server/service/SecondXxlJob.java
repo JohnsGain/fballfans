@@ -23,7 +23,7 @@ public class SecondXxlJob {
 
     @XxlJob(value = "exportOrder")
     public ReturnT<String> exportOrder(String param) {
-        log.info("输入参数={}", param);
+        log.info("输入参数={},count={}", param);
         return ReturnT.SUCCESS;
     }
 

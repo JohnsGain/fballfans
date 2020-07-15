@@ -1,13 +1,21 @@
 package com.john.server;
 
+import com.xxl.job.core.util.IpUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.commons.util.InetUtils;
+import org.springframework.cloud.commons.util.InetUtilsProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
+
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 /**
  * @author zhangjuwa
@@ -20,9 +28,25 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 @EnableScheduling()
 public class FballfansServerApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SocketException {
         //xx XX XXX XXXX:
         SpringApplication.run(FballfansServerApplication.class, args);
+        System.out.println(IpUtil.getIp());
+        Enumeration<NetworkInterface> enumeration = NetworkInterface.getNetworkInterfaces();
+        InetUtils inetUtils = new InetUtils(new InetUtilsProperties());
+        InetAddress nonLoopbackAddress = inetUtils.findFirstNonLoopbackAddress();
+        System.out.println(nonLoopbackAddress.getHostName()+" ===== "+ nonLoopbackAddress.getHostAddress());
+        while (enumeration.hasMoreElements()) {
+            NetworkInterface element = enumeration.nextElement();
+            Enumeration<InetAddress> inetAddresses = element.getInetAddresses();
+            while (inetAddresses.hasMoreElements()) {
+                InetAddress inetAddress = inetAddresses.nextElement();
+                String hostAddress = inetAddress.getHostAddress();
+                System.out.println("本机IP地址为：" +hostAddress+"   "+inetAddress.getHostName()+"  "+inetAddress.getCanonicalHostName()+
+                        "   "+inetAddress.isAnyLocalAddress()+"  "+inetAddress.isLinkLocalAddress()+"  "+inetAddress.isMCLinkLocal()+
+                        "  "+inetAddress.isSiteLocalAddress());
+            }
+        }
     }
 
     /**

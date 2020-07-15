@@ -13,18 +13,18 @@ spring:
         jdbc:
           time_zone: Asia/Shanghai
   redis:
-    host: localhost
+    host: 192.168.0.101
     password: warehouse
 
-  rabbitmq:
-    username: johnawll
-    password: 123456
-    virtual-host: johnawll
+#  rabbitmq:
+#    username: johnawll
+#    password: 123456
+#    virtual-host: johnawll
 
   datasource:
-    url: jdbc:mysql://localhost:3306/warehouse?useUnicode=yes&characterEncoding=utf-8&useSSL=false
-    username: root
-    password: zhangJW.428
+    url: jdbc:mysql://192.168.0.101:3306/warehouse?useUnicode=yes&characterEncoding=utf-8&useSSL=false
+    username: finley
+    password: yigongpin.YGP
     driver-class-name: com.mysql.jdbc.Driver
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource
@@ -94,7 +94,7 @@ logging:
 xxl:
   job:
     admin:
-      addresses: http://127.0.0.1:8080/xxl-job-admin
+      addresses: http://192.168.0.101:8080/xxl-job-admin
     accessToken:
     executor:
       appname: ${spring.application.name}

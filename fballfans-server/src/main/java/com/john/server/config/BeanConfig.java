@@ -37,10 +37,10 @@ public class BeanConfig {
         return redisTemplate;
     }
 
-    @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
-    }
+    //@Bean
+    //public ServerEndpointExporter serverEndpointExporter() {
+    //    return new ServerEndpointExporter();
+    //}
 
 
 }
