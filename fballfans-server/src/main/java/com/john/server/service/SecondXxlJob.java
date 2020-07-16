@@ -18,6 +18,9 @@ public class SecondXxlJob {
     @XxlJob(value = "calculate")
     public ReturnT<String> calculate(String param) {
         log.info("输入参数={}", param);
+        if ("123".startsWith(param)) {
+            throw new RuntimeException("测试异常日志");
+        }
         return ReturnT.SUCCESS;
     }
 

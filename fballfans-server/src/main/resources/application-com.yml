@@ -21,17 +21,18 @@ spring:
 #    cluster:
 #      nodes: DDBtest008:6379, DDBtest008:6380, DDBtest008:6381, DDBtest008:6382, DDBtest008:6383, DDBtest008:6384
 #      nodes: 211.159.185.172:6379
-
-  rabbitmq:
-    username: admin
-    password: ligeit
-    virtual-host: tbl
+  redis:
+    host: 192.168.0.101
+    password: warehouse
+#  rabbitmq:
+#    username: admin
+#    password: ligeit
+#    virtual-host: tbl
   datasource:
 #    url: jdbc:mysql://192.168.1.108:3306/test
-    url: jdbc:mysql://211.159.185.172:3306/warehouse?useUnicode=yes&characterEncoding=utf-8&useSSL=false
-    username: john
-    password: zhangJW.428
-    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.0.101:3306/warehouse?useUnicode=yes&characterEncoding=utf-8&useSSL=false
+    username: finley
+    password: yigongpin.YGPmysql.jdbc.Driver
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
