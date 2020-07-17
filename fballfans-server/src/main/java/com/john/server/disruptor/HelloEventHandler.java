@@ -2,6 +2,7 @@ package com.john.server.disruptor;
 
 import com.lmax.disruptor.EventHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 /**
  * @author zhangjuwa
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since jdk1.8
  */
 @Slf4j
+@Component
 public class HelloEventHandler implements EventHandler<MessageModel> {
     @Override
     public void onEvent(MessageModel event, long l, boolean b) throws Exception {

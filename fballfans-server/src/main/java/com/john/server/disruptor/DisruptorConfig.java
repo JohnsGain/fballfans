@@ -4,12 +4,10 @@ import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author zhangjuwa
@@ -17,15 +15,20 @@ import java.util.concurrent.Executors;
  * @since jdk1.8
  */
 @Configuration
+@Slf4j
 public class DisruptorConfig {
 
     @Bean("messageModel")
     public RingBuffer<MessageModel> messageModelRingBuffer() {
+        log.info("配置=={}", "messageModel");
         //指定事件工厂
         HelloEventFactory factory = new HelloEventFactory();
 
-        //指定ringbuffer字节大小，必须为2的N次方（能将求模运算转为位运算提高效率），否则将影响效率
-        int bufferSize = 1024 * 256;
+      /*  指定ringbuffer字节大小，必须为2的N次方（能将求模运算转为位运算提高效率），否则将影响效率。
+        bufferSize有多大，就会循环遍历创建多少个 消息对象到ringbuffer里面。这也是为什么disruptor高效的一个原因，
+        在消息非常多的情况下，可以减少大量消息创建的时间浪费，但是另一方面就是需要占用更多的空间来存储消息对象
+        */
+        int bufferSize = 1024;
 
         //单线程模式，获取额外的性能
         BasicThreadFactory.Builder builder = new BasicThreadFactory.Builder().namingPattern("disruptor-factory-%d");
