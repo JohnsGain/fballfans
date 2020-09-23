@@ -33,7 +33,7 @@ public class WebSocketServer {
      */
     @OnOpen
     public void onOpen(Session session, @PathParam("sid") String sid) {
-        log.info("新建立websocket连接= {}", sid);
+        log.info("新建立websocket连接= {}", session.getId());
         onlineSessions.put(session.getId(), session);
         sendMessageToAll("当前在线人数" + onlineSessions.size());
     }

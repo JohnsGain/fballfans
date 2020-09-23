@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>websockt</title>
-    <script>
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" >
+        var webSocket;
 
         /**
          * WebSocket客户端
@@ -16,21 +18,21 @@
             /**
              * WebSocket客户端 PS：URL开头表示WebSocket协议 中间是域名端口 结尾是服务端映射地址
              */
-            var webSocket = new WebSocket('ws://localhost:8778/websocket');
+            var socket = new WebSocket('ws://localhost:8778/websocket');
             /**
              * 当服务端打开连接
              */
-            webSocket.onopen = function (event) {
+            socket.onopen = function (event) {
                 console.log('WebSocket打开连接');
             };
 
             /**
              * 当服务端发来消息：1.广播消息 2.更新在线人数
              */
-            webSocket.onmessage = function (event) {
+            socket.onmessage = function (event) {
                 console.log('WebSocket收到消息：%c' + event.data, 'color:green');
                 //获取服务端消息
-                var message = JSON.parse(event.data) || {};
+                var message = event.data || {};
                 var $messageContainer = $('.message-container');
                 //喉咙发炎
                 if (message.type === 'SPEAK') {
@@ -53,38 +55,37 @@
             /**
              * 关闭连接
              */
-            webSocket.onclose = function (event) {
+            socket.onclose = function (event) {
                 console.log('WebSocket关闭连接');
             };
 
             /**
              * 通信失败
              */
-            webSocket.onerror = function (event) {
+            socket.onerror = function (event) {
                 console.log('WebSocket发生异常');
 
             };
-            return webSocket;
+            webSocket = socket;
+            return socket;
         }
-
-        var webSocket = getWebSocket();
-
 
         /**
          * 通过WebSocket对象发送消息给服务端
          */
         function sendMsgToServer() {
-            var $message = $('#msg');
+            var $message = $('#textId');
             if ($message.val()) {
-                webSocket.send(JSON.stringify({username: $('#username').text(), msg: $message.val()}));
+                webSocket.send($message.val());
                 $message.val(null);
             }
 
         }
+
         /**
          * 清屏
          */
-        function clearMsg(){
+        function clearMsg() {
             $(".message-container").empty();
         }
 
@@ -99,6 +100,12 @@
 </head>
 <body>
 <h1>演示websocket!!!</h1>
-<button onclick="this.innerHTML=Date()">现在的时间是?</button>
+<div>
+    <div>
+        <button id="start" onclick="getWebSocket()">启动websocket</button>
+    </div>
+    <label for="textId">输入要发送的消息:</label><input type="text" value="" id="textId" class="textClass" name="textName">
+    <button onclick="sendMsgToServer()">点击发送</button>
+</div>
 </body>
 </html>
