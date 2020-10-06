@@ -32,7 +32,7 @@ spring:
 #    url: jdbc:mysql://192.168.1.108:3306/test
     url: jdbc:mysql://192.168.0.101:3306/warehouse?useUnicode=yes&characterEncoding=utf-8&useSSL=false
     username: finley
-    password: yigongpin.YGPmysql.jdbc.Driver
+    password: yigongpin.YGP
     #HikariCP连接池设置，同样的条件下，页面查询响应速度提高20%
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
