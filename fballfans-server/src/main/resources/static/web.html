@@ -82,6 +82,19 @@
 
         }
 
+        function testCors() {
+            $.ajax({
+                type: "GET",
+                url: "http://nginx.john:8081/indexa.html",
+                success: function (event) {
+                    console.log("success!!!");
+                } ,
+                error: function (error) {
+                    console.log("error");
+                }
+            });
+        }
+
         /**
          * 清屏
          */
@@ -106,6 +119,8 @@
     </div>
     <label for="textId">输入要发送的消息:</label><input type="text" value="" id="textId" class="textClass" name="textName">
     <button onclick="sendMsgToServer()">点击发送</button>
+    <p><button onclick="testCors()">跨域请求</button></p>
+    <p><img src="http://nginx.john:8081/IMG_3298.jpeg">防盗链测试</p>
 </div>
 </body>
 </html>
