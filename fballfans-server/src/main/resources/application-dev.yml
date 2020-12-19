@@ -94,7 +94,7 @@ logging:
 xxl:
   job:
     admin:
-      addresses: http://192.168.0.101:8080/xxl-job-admin
+      addresses: http://localhost:8080/xxl-job-admin
     accessToken:
     executor:
       appname: ${spring.application.name}

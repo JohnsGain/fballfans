@@ -95,6 +95,19 @@
             });
         }
 
+        function sse() {
+            // const eventSource = new EventSource('http://dev-gateway.yigongpin.net/api/pms/publishLog/auditBatchResult?key=AD201209000002');
+            const eventSource = new EventSource('http://localhost:8778/emitter?userId=AD201209000002');
+
+            eventSource.addEventListener("AD201209000002", (event) => {
+                const message = JSON.parse(event.data);
+                console.log(message);
+            });
+            eventSource.onerror("error",(event)=>{
+                console.log("error", event)
+            });
+        }
+
         /**
          * 清屏
          */
@@ -120,6 +133,7 @@
     <label for="textId">输入要发送的消息:</label><input type="text" value="" id="textId" class="textClass" name="textName">
     <button onclick="sendMsgToServer()">点击发送</button>
     <p><button onclick="testCors()">跨域请求</button></p>
+    <p><button onclick="sse()">serversent-event请求</button></p>
     <p><img src="http://nginx.john:8081/IMG_3298.jpeg">防盗链测试</p>
 </div>
 </body>
