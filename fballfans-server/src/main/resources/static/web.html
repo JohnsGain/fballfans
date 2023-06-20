@@ -96,16 +96,18 @@
         }
 
         function sse() {
-            // const eventSource = new EventSource('http://dev-gateway.yigongpin.net/api/pms/publishLog/auditBatchResult?key=AD201209000002');
-            const eventSource = new EventSource('http://localhost:8778/emitter?userId=AD201209000002');
-
-            eventSource.addEventListener("AD201209000002", (event) => {
-                const message = JSON.parse(event.data);
-                console.log(message);
+            const eventSource = new EventSource('http://dev-gateway.yigongpin.net/api/pms/publishLog/auditBatchResult?token=91e6e51bc859339e7ced3b6dd5aaaef4');
+            // const eventSource = new EventSource('http://localhost:8778/emitter?userId=AD201209000002');
+            eventSource.onmessage=function (event){
+                console.log("ddd", event.data);
+            }
+            eventSource.addEventListener("91e6e51bc859339e7ced3b6dd5aaaef4", (event) => {
+<!--                 const message = JSON.parse(event.data); -->
+                console.log(event.data);
             });
-            eventSource.onerror("error",(event)=>{
-                console.log("error", event)
-            });
+            // eventSource.onerror("error",(event)=>{
+            //     console.log("error", event)
+            // });
         }
 
         /**

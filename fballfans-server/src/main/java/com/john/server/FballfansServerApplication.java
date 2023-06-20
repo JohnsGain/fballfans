@@ -36,17 +36,17 @@ public class FballfansServerApplication {
         InetUtils inetUtils = new InetUtils(new InetUtilsProperties());
         InetAddress nonLoopbackAddress = inetUtils.findFirstNonLoopbackAddress();
         System.out.println(nonLoopbackAddress.getHostName()+" ===== "+ nonLoopbackAddress.getHostAddress());
-        while (enumeration.hasMoreElements()) {
-            NetworkInterface element = enumeration.nextElement();
-            Enumeration<InetAddress> inetAddresses = element.getInetAddresses();
-            while (inetAddresses.hasMoreElements()) {
-                InetAddress inetAddress = inetAddresses.nextElement();
-                String hostAddress = inetAddress.getHostAddress();
-                System.out.println("本机IP地址为：" +hostAddress+"   "+inetAddress.getHostName()+"  "+inetAddress.getCanonicalHostName()+
-                        "   "+inetAddress.isAnyLocalAddress()+"  "+inetAddress.isLinkLocalAddress()+"  "+inetAddress.isMCLinkLocal()+
-                        "  "+inetAddress.isSiteLocalAddress());
-            }
-        }
+//        while (enumeration.hasMoreElements()) {
+//            NetworkInterface element = enumeration.nextElement();
+//            Enumeration<InetAddress> inetAddresses = element.getInetAddresses();
+//            while (inetAddresses.hasMoreElements()) {
+//                InetAddress inetAddress = inetAddresses.nextElement();
+//                String hostAddress = inetAddress.getHostAddress();
+//                System.out.println("本机IP地址为：" +hostAddress+"   "+inetAddress.getHostName()+"  "+inetAddress.getCanonicalHostName()+
+//                        "   "+inetAddress.isAnyLocalAddress()+"  "+inetAddress.isLinkLocalAddress()+"  "+inetAddress.isMCLinkLocal()+
+//                        "  "+inetAddress.isSiteLocalAddress());
+//            }
+//        }
     }
 
     /**
