@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class HelloEventFactory implements EventFactory<MessageModel> {
     @Override
     public MessageModel newInstance() {
-        log.info("哪里在调用....一直在创建对象");
+//        log.info("哪里在调用....一直在创建对象");
         return new MessageModel();
     }
 }
